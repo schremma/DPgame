@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="play_sentence_text_size">24sp</dimen>
+    <dimen name="play_choice_text_size">18sp</dimen>
+    <dimen name="play_choice_padding">20dp</dimen>
+
+    <dimen name="main_navigation_choice_width">150dp</dimen>
+    <dimen name="main_navigation_choice_height">100dp</dimen>
+    <dimen name="main_navigation_choice_text_size">24sp</dimen>
+    <dimen name="level_navigation_item_text_size">24sp</dimen>
+    <dimen name="level_navigation_item_padding">8dp</dimen>
+
+</resources>
