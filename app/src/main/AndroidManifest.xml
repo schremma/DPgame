@@ -26,6 +26,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
         </activity>
+
+        <provider
+            android:authorities="com.melodipsel.dpgame.provider"
+            android:name=".data.DPGameProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

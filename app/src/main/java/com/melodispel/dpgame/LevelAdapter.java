@@ -23,7 +23,7 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelAdapter
         itemClickHandler = onClickHandler;
     }
 
-    public void swapCursor(Cursor newData) {
+    public void setData(Cursor newData) {
         levelCursor = newData;
         notifyDataSetChanged();
     }

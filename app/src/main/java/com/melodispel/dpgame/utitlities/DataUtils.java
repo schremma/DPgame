@@ -33,9 +33,10 @@ public final class DataUtils {
         ArrayList<String> material = ReadTextResource(context, R.raw.material);
 
 
+        ContentValues[] values = new ContentValues[material.size()];
 
-        for (String line : material) {
-            String[] cells = line.split(MATERIAL_TEXT_SEPARATOR);
+        for (int i = 0; i < material.size(); i++) {
+            String[] cells = material.get(i).split(MATERIAL_TEXT_SEPARATOR);
 
             ContentValues cv = new ContentValues();
             cv.put(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID, cells[INDEX_SENTENCE_ID]);
@@ -45,9 +46,19 @@ public final class DataUtils {
             cv.put(DBContract.MaterialsEntry.COLUMN_WRONG, cells[INDEX_WRONG]);
             cv.put(DBContract.MaterialsEntry.COLUMN_LEVEL, cells[INDEX_LEVEL]);
 
-            db.insert(DBContract.MaterialsEntry.TABLE_NAME, null, cv);
+            values[i] = cv;
         }
 
+        db.beginTransaction();
+        try {
+            for (ContentValues value : values) {
+
+                db.insert(DBContract.MaterialsEntry.TABLE_NAME, null, value);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
 
     }
 

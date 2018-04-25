@@ -19,6 +19,7 @@ public final class DBContract {
 
     public static final String COUNT = "count";
     public static final String DISTINCT = "distinct";
+    public static final String TOP = "top";
 
     public static final class MaterialsEntry implements BaseColumns {
 
@@ -42,6 +43,21 @@ public final class DBContract {
                     build();
         }
 
+        public static Uri buildAllAvailableLevelUri() {
+            return CONTENT_URI.buildUpon().
+                    appendPath(DISTINCT).
+                    build();
+        }
+
+        public static Uri buildFirstAvailableLevelUri() {
+            return CONTENT_URI.buildUpon().
+                    appendPath(DISTINCT).
+                    appendPath("1").
+                    build();
+        }
+
+
+
     }
 
     public static final class ResponsesEntry implements BaseColumns {
@@ -64,11 +80,14 @@ public final class DBContract {
                     build();
         }
 
-        public static Uri buildAllAchievedLevelUri(int level) {
+
+        public static Uri buildLastPlayedSentenceIdUri(int limit) {
             return CONTENT_URI.buildUpon().
-                    appendPath(DISTINCT).
+                    appendPath(TOP).
+                    appendPath(String.valueOf(limit)).
                     build();
         }
+
     }
 
     public  static final class SessionDataEntry implements BaseColumns {
@@ -79,8 +98,14 @@ public final class DBContract {
 
         public static final String TABLE_NAME = "sessionData";
         public static final String COLUMN_SESSION_START_TIME_STAMP = "sessionStart";
-        public static final String COLUMN_START_LEVEL = "startingLevel";
+        public static final String COLUMN_LEVEL = "level";
         public static final String COLUMN_SESSION_CUSTOMS = "sessionCustoms";
         public static final String COLUMN_IS_PLAYER_SESSION = "isPlayerSession";
+
+        public static Uri buildAllAchievedLevelUri() {
+            return CONTENT_URI.buildUpon().
+                    appendPath(DISTINCT).
+                    build();
+        }
     }
 }

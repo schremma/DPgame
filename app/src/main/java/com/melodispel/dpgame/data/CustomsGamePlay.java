@@ -11,9 +11,10 @@ public final class CustomsGamePlay {
 
     public static final String TIMED_SESSION = "timed session";
 
-    // When the player is re-playin an already completed level
+    // When the player is re-playing an already completed level
     public static final String REPEATED_LEVEL = "repeated level";
 
+    public static final String LEVEL_PROGRESS = "level progress";
 
     public static String CreateCustomsString(ArrayList<String> customs) {
 

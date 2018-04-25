@@ -4,11 +4,11 @@ package com.melodispel.dpgame.gameplay;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.melodispel.dpgame.data.CustomsGamePlay;
 import com.melodispel.dpgame.data.DBContract;
 import com.melodispel.dpgame.data.DBOpenHelper;
 import com.melodispel.dpgame.data.ResponseData;
@@ -22,6 +22,7 @@ public class GameManager implements GamePlayManager {
 
     private int currentLevel;
     private GamePlayDisplay gamePlayDisplay;
+    private boolean isPlayerSession;
 
     private static final int STRING_VALUES_RT_INDEX = 0;
     private static final int STRING_VALUES_ACCURACY_INDEX = 1;
@@ -30,10 +31,11 @@ public class GameManager implements GamePlayManager {
         return currentLevel;
     }
 
-    public GameManager(Context context, GamePlayDisplay gamePlayDisplay, int currentLevel) {
+    public GameManager(Context context, GamePlayDisplay gamePlayDisplay, int currentLevel, boolean isPlayerSession) {
         this.context = context;
         this.currentLevel = currentLevel;
         this.gamePlayDisplay = gamePlayDisplay;
+        this.isPlayerSession = isPlayerSession;
 
         DBOpenHelper dbOpenHelper = new DBOpenHelper(context);
         db = dbOpenHelper.getReadableDatabase();
@@ -41,7 +43,7 @@ public class GameManager implements GamePlayManager {
     }
 
     @Override
-    public void onNewSessionStarted(boolean isPlayerSession, String sessionCustoms) {
+    public void onNewSessionStarted(String sessionCustoms) {
         SessionData sessionData = new SessionData();
         sessionData.setStartTimeStamp(System.currentTimeMillis());
         sessionData.setIsPlayerSession(isPlayerSession);
@@ -71,7 +73,7 @@ public class GameManager implements GamePlayManager {
         // Continue with sentences that are higher than the last saved id
 
         Cursor materialsCursor = getAllSentencesForLevel(currentLevel);
-        long responsesCount = getResponseCountForLevel(currentLevel);
+        int responsesCount = getResponseCountForLevel(currentLevel);
 
         Log.i(this.getClass().getSimpleName(), "Saved responses at current level: " + String.valueOf(responsesCount));
 
@@ -126,6 +128,15 @@ public class GameManager implements GamePlayManager {
                 throw  new IllegalArgumentException("No material could be retrieved for level " + currentLevel);
             }
         }
+
+        SessionData sessionData = new SessionData();
+        sessionData.setStartTimeStamp(System.currentTimeMillis());
+        sessionData.setIsPlayerSession(isPlayerSession);
+        sessionData.setLevel(currentLevel);
+
+        sessionData.setSessionCustoms(CustomsGamePlay.LEVEL_PROGRESS);
+
+        new SaveSessionAsyncTask().execute(sessionData);
     }
 
 
@@ -177,39 +188,31 @@ public class GameManager implements GamePlayManager {
 
     }
 
-    private Cursor getAllSentences() {
-        return db.query(DBContract.MaterialsEntry.TABLE_NAME,
-                null, null, null,null,null,
-                DBContract.MaterialsEntry.COLUMN_SENTENCE_ID);
-    }
-
     private Cursor getAllSentencesForLevel(int level) {
-        return db.query(DBContract.MaterialsEntry.TABLE_NAME,
+        return context.getContentResolver().query(DBContract.MaterialsEntry.CONTENT_URI,
                 null, DBContract.MaterialsEntry.COLUMN_LEVEL + "=?",
-                new String[] {String.valueOf(level)},null,null,
+                new String[] {String.valueOf(level)},
                 DBContract.MaterialsEntry.COLUMN_SENTENCE_ID);
     }
 
-    private Cursor getSentence(int sentenceId) {
-        return db.query(DBContract.MaterialsEntry.TABLE_NAME,
-                null, DBContract.MaterialsEntry.COLUMN_SENTENCE_ID + "=?",
-                new String[] {String.valueOf(sentenceId)},null,null,
-                null);
-    }
 
-    private long getResponseCountForLevel(int level) {
-        return DatabaseUtils.queryNumEntries(db, DBContract.ResponsesEntry.TABLE_NAME,
-                "level=?", new String[]{String.valueOf(level)});
+    private int getResponseCountForLevel(int level) {
+        Cursor countCursor = context.getContentResolver().query(DBContract.ResponsesEntry.buildCountResponsesAtLevelUri(level),
+                null,null,null,null);
+        countCursor.moveToFirst();
+        return countCursor.getInt(0);
     }
 
     private long getSentenceCountForLevel(int level) {
-        return DatabaseUtils.queryNumEntries(db, DBContract.MaterialsEntry.TABLE_NAME,
-                "level=?", new String[]{String.valueOf(level)});
+        Cursor countCursor = context.getContentResolver().query(DBContract.MaterialsEntry.buildCountSentencesAtLevelUri(level),
+                null,null,null,null);
+        countCursor.moveToFirst();
+        return countCursor.getInt(0);
     }
 
     private Cursor getLastPlayedSentenceIdOnLevel(int level) {
-        return db.query(DBContract.ResponsesEntry.TABLE_NAME, new String[] {DBContract.ResponsesEntry.COLUMN_SENTENCE_ID} , "level=?", new String[]{String.valueOf(currentLevel)}, null, null,
-                DBContract.ResponsesEntry.COLUMN_TIME_STAMP +" DESC", "1");
+        return context.getContentResolver().query(DBContract.ResponsesEntry.buildLastPlayedSentenceIdUri(1),
+                null,DBContract.ResponsesEntry.COLUMN_LEVEL + "=?", new String[]{String.valueOf(level)}, null);
     }
 
     private class SaveResponseAsyncTask extends AsyncTask<ResponseData, Void, Void> {
@@ -243,9 +246,11 @@ public class GameManager implements GamePlayManager {
             for (int i = 0; i < sessionData.length; i++) {
                 ContentValues cv = new ContentValues();
                 cv.put(DBContract.SessionDataEntry.COLUMN_IS_PLAYER_SESSION, sessionData[i].getIsPlayerSession());
-                cv.put(DBContract.SessionDataEntry.COLUMN_START_LEVEL, sessionData[i].getLevel());
+                cv.put(DBContract.SessionDataEntry.COLUMN_LEVEL, sessionData[i].getLevel());
                 cv.put(DBContract.SessionDataEntry.COLUMN_SESSION_START_TIME_STAMP, sessionData[i].getStartTimeStamp());
                 cv.put(DBContract.SessionDataEntry.COLUMN_SESSION_CUSTOMS, sessionData[i].getSessionCustoms());
+
+                db.insert(DBContract.SessionDataEntry.TABLE_NAME, null, cv);
 
                 Log.i(getClass().getSimpleName(), "saved session data: " + cv.toString());
 

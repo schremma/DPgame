@@ -1,23 +1,22 @@
 package com.melodispel.dpgame;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.melodispel.dpgame.data.DBContract;
-import com.melodispel.dpgame.data.DBOpenHelper;
 
 public class LevelListActivity extends AppCompatActivity implements LevelAdapter.LevelAdapterOnClickHandler {
 
     private SQLiteDatabase db;
     private RecyclerView rwLevels;
 
-    public static final String COLUMN_NAME_LEVEL = DBContract.ResponsesEntry.COLUMN_LEVEL;
+    public static final String COLUMN_NAME_LEVEL = DBContract.SessionDataEntry.COLUMN_LEVEL;
     public static final String EXTRA_LEVEL = "com.melodispel.dpgame.LEVEL";
 
     @Override
@@ -25,18 +24,32 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level_list);
 
-        SQLiteOpenHelper dbOpenHelper = new DBOpenHelper(this);
-        db = dbOpenHelper.getReadableDatabase();
-        Cursor levelCursor = getAllDistinctLevels();
+
+        // TODO retrieve either player sessions or tester sessions
+        ContentResolver contentResolver = this.getContentResolver();
+        Cursor levelCursor = contentResolver.query(DBContract.SessionDataEntry.buildAllAchievedLevelUri(),
+                null,
+                DBContract.SessionDataEntry.COLUMN_IS_PLAYER_SESSION + "=?",
+                new String[]{"1"},
+                null);
+
+
         if (levelCursor == null || levelCursor.getCount() < 1) {
-            levelCursor = getFirstLevel();
+
+            levelCursor = contentResolver.query(DBContract.MaterialsEntry.buildFirstAvailableLevelUri(),
+                    null,
+                    null,
+                    null,
+                    null);
         }
+
+
         if (levelCursor == null) {
             throw new IllegalArgumentException("No levels were found!");
         }
 
         LevelAdapter levelAdapter = new LevelAdapter(this, this);
-        levelAdapter.swapCursor(levelCursor);
+        levelAdapter.setData(levelCursor);
 
         rwLevels = (RecyclerView)findViewById(R.id.rw_level_list);
         rwLevels.setAdapter(levelAdapter);
@@ -44,29 +57,6 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
 
     }
 
-    private Cursor getAllDistinctLevels() {
-
-        Cursor levels = db.query(true, DBContract.ResponsesEntry.TABLE_NAME,
-                new String[] {DBContract.ResponsesEntry.COLUMN_LEVEL},
-                null,
-                null,
-                null,
-                null,
-                DBContract.ResponsesEntry.COLUMN_LEVEL+" DESC",
-                null);
-        return levels;
-    }
-
-    private Cursor getFirstLevel() {
-        Cursor firstLevel = db.query(DBContract.MaterialsEntry.TABLE_NAME,
-                new String[] {DBContract.MaterialsEntry.COLUMN_LEVEL},
-                null,
-                null,
-                null,
-                null,
-                DBContract.MaterialsEntry.COLUMN_LEVEL+" ASC", "1");
-        return firstLevel;
-    }
 
     @Override
     public void onItemCLick(int level) {

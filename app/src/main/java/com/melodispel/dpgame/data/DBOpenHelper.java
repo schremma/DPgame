@@ -15,7 +15,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dpgame.db";
 
     // If you change the database schema, you must increment the database version
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 11;
 
     private Context context;
 
@@ -49,7 +49,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_SESSIONDATA_TABLE = "CREATE TABLE " + DBContract.SessionDataEntry.TABLE_NAME + " (" +
                 DBContract.SessionDataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 DBContract.SessionDataEntry.COLUMN_SESSION_START_TIME_STAMP + " INTEGER, " +
-                DBContract.SessionDataEntry.COLUMN_START_LEVEL + " INTEGER, " +
+                DBContract.SessionDataEntry.COLUMN_LEVEL + " INTEGER, " +
                 DBContract.SessionDataEntry.COLUMN_SESSION_CUSTOMS + " TEXT, " +
                 DBContract.SessionDataEntry.COLUMN_IS_PLAYER_SESSION + " INTEGER" +
                 "); ";

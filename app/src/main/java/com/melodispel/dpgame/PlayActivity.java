@@ -83,15 +83,19 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
         initGameArea();
 
-        gamePlayManager = new GameManager(this, this, currentLevel);
+        boolean isPlayerSession = false;
+        if (sessionState.equals(SessionState.NOT_STARTED_PLAYER) || sessionState.equals(SessionState.IN_PROGRESS_PLAYER)) {
+            isPlayerSession = true;
+        }
+        gamePlayManager = new GameManager(this, this, currentLevel, isPlayerSession);
 
         if (sessionState.equals(SessionState.NOT_STARTED_PLAYER) || sessionState.equals(SessionState.NOT_STARTED_TESTER)) {
 
             if (sessionState.equals(SessionState.NOT_STARTED_PLAYER)) {
-                gamePlayManager.onNewSessionStarted(true, null);
+                gamePlayManager.onNewSessionStarted(null);
                 sessionState = SessionState.IN_PROGRESS_PLAYER;
             } else {
-                gamePlayManager.onNewSessionStarted(false, null);
+                gamePlayManager.onNewSessionStarted(null);
                 sessionState = SessionState.IN_PROGRESS_TESTER;
             }
         }
