@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">DP Game</string>
-    <string name="title_activity_level_list">Play</string>
+    <string name="title_activity_level_list">Available levels</string>
 </resources>

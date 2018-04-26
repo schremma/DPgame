@@ -49,15 +49,6 @@ public final class DBContract {
                     build();
         }
 
-        public static Uri buildFirstAvailableLevelUri() {
-            return CONTENT_URI.buildUpon().
-                    appendPath(DISTINCT).
-                    appendPath("1").
-                    build();
-        }
-
-
-
     }
 
     public static final class ResponsesEntry implements BaseColumns {

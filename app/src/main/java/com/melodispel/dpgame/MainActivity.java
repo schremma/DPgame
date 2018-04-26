@@ -30,6 +30,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent testIntent = new Intent(getApplicationContext(), LevelListActivity.class);
+                testIntent.putExtra(EXTRA_IS_PLAYER, false);
+                startActivity(testIntent);
+            }
+        });
+
     }
 
 }

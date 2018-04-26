@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 public class DPGameProvider extends ContentProvider {
 
@@ -21,7 +22,6 @@ public class DPGameProvider extends ContentProvider {
     public static final int CODE_ALL_ACHIEVED_LEVELS = 106;
     public static final int CODE_ALL_AVAILABLE_LEVELS = 107;
     public static final int CODE_MATERIAL_WITH_ID = 108;
-    public static final int CODE_FIRST_AVAILABLE_LEVEL = 109;
     public static final int CODE_LAST_PLAYED_SENTENCE_ID = 110;
     public static final int CODE_RESPONSE_WITH_ID = 111;
     public static final int CODE_SESSIONDATA_WITH_ID = 112;
@@ -46,7 +46,6 @@ public class DPGameProvider extends ContentProvider {
 
         matcher.addURI(authority, DBContract.PATH_SESSIONDATA + "/" + DBContract.DISTINCT, CODE_ALL_ACHIEVED_LEVELS);
         matcher.addURI(authority, DBContract.PATH_MATERIALS + "/" + DBContract.DISTINCT, CODE_ALL_AVAILABLE_LEVELS);
-        matcher.addURI(authority, DBContract.PATH_MATERIALS + "/" + DBContract.DISTINCT + "/1", CODE_FIRST_AVAILABLE_LEVEL);
         matcher.addURI(authority, DBContract.PATH_RESPONSES + "/" + DBContract.TOP + "/#", CODE_LAST_PLAYED_SENTENCE_ID);
 
         return matcher;
@@ -172,6 +171,9 @@ public class DPGameProvider extends ContentProvider {
 
             case CODE_ALL_ACHIEVED_LEVELS:
 
+                selection = DBContract.SessionDataEntry.COLUMN_IS_PLAYER_SESSION + "=?";
+                selectionArgs = new String[]{"1"};
+
                 cursor = dbOpenHelper.getReadableDatabase().query(true, DBContract.SessionDataEntry.TABLE_NAME,
                         new String[] {DBContract.SessionDataEntry.COLUMN_LEVEL},
                         selection,
@@ -181,6 +183,17 @@ public class DPGameProvider extends ContentProvider {
                         DBContract.SessionDataEntry.COLUMN_LEVEL +" DESC",
                         null);
 
+                if (cursor == null  || cursor.getCount() < 1){
+                // the first possible level is always achieved by default
+                cursor = dbOpenHelper.getReadableDatabase().query(true, DBContract.MaterialsEntry.TABLE_NAME,
+                        new String[]{DBContract.MaterialsEntry.COLUMN_LEVEL},
+                        null,
+                        null,
+                        null,
+                        null,
+                        DBContract.MaterialsEntry.COLUMN_LEVEL + " ASC",
+                        "1");
+                }
 
                 break;
 
@@ -196,17 +209,6 @@ public class DPGameProvider extends ContentProvider {
                         null);
                 break;
 
-            case CODE_FIRST_AVAILABLE_LEVEL:
-
-                cursor = dbOpenHelper.getReadableDatabase().query(true, DBContract.MaterialsEntry.TABLE_NAME,
-                        new String[] {DBContract.MaterialsEntry.COLUMN_LEVEL},
-                        null,
-                        null,
-                        null,
-                        null,
-                        DBContract.MaterialsEntry.COLUMN_LEVEL+" ASC",
-                        "1");
-                break;
 
             case CODE_LAST_PLAYED_SENTENCE_ID:
                 String limit = uri.getLastPathSegment();
@@ -226,7 +228,7 @@ public class DPGameProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 
         }
-
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -268,6 +270,7 @@ public class DPGameProvider extends ContentProvider {
 
                 if (sessionId != -1) {
                     getContext().getContentResolver().notifyChange(uri, null);
+
                 }
 
                 return Uri.parse(DBContract.PATH_SESSIONDATA + "/" + sessionId);
