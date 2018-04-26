@@ -15,22 +15,31 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
 
     private SQLiteDatabase db;
     private RecyclerView rwLevels;
+    private boolean isPlayer;
 
     public static final String COLUMN_NAME_LEVEL = DBContract.SessionDataEntry.COLUMN_LEVEL;
     public static final String EXTRA_LEVEL = "com.melodispel.dpgame.LEVEL";
+
+    public static final boolean IS_PLAYER_DEFAULT = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level_list);
 
+        Intent intent = getIntent();
+        isPlayer = intent.getBooleanExtra(MainActivity.EXTRA_IS_PLAYER, IS_PLAYER_DEFAULT);
 
-        // TODO retrieve either player sessions or tester sessions
+        // retrieve either player sessions or tester sessions
+        String selection = DBContract.SessionDataEntry.COLUMN_IS_PLAYER_SESSION + "=?";
+        String selectionValue = isPlayer ? "1" : "0";
+        String[] selectionArgs = new String[]{selectionValue};
+
         ContentResolver contentResolver = this.getContentResolver();
         Cursor levelCursor = contentResolver.query(DBContract.SessionDataEntry.buildAllAchievedLevelUri(),
                 null,
-                DBContract.SessionDataEntry.COLUMN_IS_PLAYER_SESSION + "=?",
-                new String[]{"1"},
+                selection,
+                selectionArgs,
                 null);
 
 

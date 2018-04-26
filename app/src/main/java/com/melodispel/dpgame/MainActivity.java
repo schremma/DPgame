@@ -12,6 +12,8 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
 
+    public static final String EXTRA_IS_PLAYER = "com.melodispel.dpgame.ISPLAYER";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +24,9 @@ public class MainActivity extends AppCompatActivity {
         binding.btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), LevelListActivity.class));
+                Intent playIntent = new Intent(getApplicationContext(), LevelListActivity.class);
+                playIntent.putExtra(EXTRA_IS_PLAYER, true);
+                startActivity(playIntent);
             }
         });
 

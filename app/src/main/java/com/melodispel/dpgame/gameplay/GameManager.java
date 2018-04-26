@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,7 +17,6 @@ import com.melodispel.dpgame.data.SessionData;
 
 public class GameManager implements GamePlayManager {
 
-    private SQLiteDatabase db;
     private Context context;
     private ResponseManager responseManager;
 
@@ -37,8 +37,6 @@ public class GameManager implements GamePlayManager {
         this.gamePlayDisplay = gamePlayDisplay;
         this.isPlayerSession = isPlayerSession;
 
-        DBOpenHelper dbOpenHelper = new DBOpenHelper(context);
-        db = dbOpenHelper.getReadableDatabase();
         responseManager = new ResponseManager();
     }
 
@@ -228,9 +226,12 @@ public class GameManager implements GamePlayManager {
                 cv.put(DBContract.ResponsesEntry.COLUMN_SENTENCE_ID, responseData[i].getSentenceId());
                 cv.put(DBContract.ResponsesEntry.COLUMN_TIME_STAMP, responseData[i].getTimestamp());
 
-                db.insert(DBContract.ResponsesEntry.TABLE_NAME, null, cv);
+                //db.insert(DBContract.ResponsesEntry.TABLE_NAME, null, cv);
 
-                Log.i(getClass().getSimpleName(), "saved response data: " + cv.toString());
+                Uri responseUri = context.getContentResolver().insert(DBContract.ResponsesEntry.CONTENT_URI, cv);
+
+                Log.i(getClass().getSimpleName(), "saved response data: " + cv.toString() +
+                " , to: " + responseUri.toString());
 
             }
             return null;
@@ -250,16 +251,16 @@ public class GameManager implements GamePlayManager {
                 cv.put(DBContract.SessionDataEntry.COLUMN_SESSION_START_TIME_STAMP, sessionData[i].getStartTimeStamp());
                 cv.put(DBContract.SessionDataEntry.COLUMN_SESSION_CUSTOMS, sessionData[i].getSessionCustoms());
 
-                db.insert(DBContract.SessionDataEntry.TABLE_NAME, null, cv);
+               // db.insert(DBContract.SessionDataEntry.TABLE_NAME, null, cv);
 
-                Log.i(getClass().getSimpleName(), "saved session data: " + cv.toString());
+                Uri responseUri = context.getContentResolver().insert(DBContract.SessionDataEntry.CONTENT_URI, cv);
+
+                Log.i(getClass().getSimpleName(), "saved session data: " + cv.toString() +
+                        " , to: " + responseUri.toString());
 
             }
-
             return null;
         }
     }
-
-
 
 }

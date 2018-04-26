@@ -23,6 +23,8 @@ public class DPGameProvider extends ContentProvider {
     public static final int CODE_MATERIAL_WITH_ID = 108;
     public static final int CODE_FIRST_AVAILABLE_LEVEL = 109;
     public static final int CODE_LAST_PLAYED_SENTENCE_ID = 110;
+    public static final int CODE_RESPONSE_WITH_ID = 111;
+    public static final int CODE_SESSIONDATA_WITH_ID = 112;
 
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -36,6 +38,8 @@ public class DPGameProvider extends ContentProvider {
         matcher.addURI(authority, DBContract.PATH_SESSIONDATA, CODE_SESSIONDATA);
 
         matcher.addURI(authority, DBContract.PATH_MATERIALS +  "/#", CODE_MATERIAL_WITH_ID);
+        matcher.addURI(authority, DBContract.PATH_RESPONSES +  "/#", CODE_RESPONSE_WITH_ID);
+        matcher.addURI(authority, DBContract.PATH_SESSIONDATA +  "/#", CODE_SESSIONDATA_WITH_ID);
 
         matcher.addURI(authority, DBContract.PATH_RESPONSES + "/" + DBContract.COUNT + "/#", CODE_COUNT_RESPONSES);
         matcher.addURI(authority, DBContract.PATH_MATERIALS + "/" + DBContract.COUNT + "/#", CODE_COUNT_SENTENCES);
@@ -96,6 +100,37 @@ public class DPGameProvider extends ContentProvider {
                         sortOrder);
                 break;
 
+            case CODE_RESPONSE_WITH_ID:
+                String responseId = uri.getLastPathSegment();
+
+                selection = DBContract.ResponsesEntry._ID + "=?";
+                selectionArgs = new String[]{responseId};
+
+                cursor = dbOpenHelper.getReadableDatabase().query(
+                        DBContract.ResponsesEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            case CODE_SESSIONDATA_WITH_ID: // materials might be retrieved by database _id or by sentence id
+                String sessionId = uri.getLastPathSegment();
+
+                selection = DBContract.SessionDataEntry._ID + "=?";
+                selectionArgs = new String[]{sessionId};
+
+                cursor = dbOpenHelper.getReadableDatabase().query(
+                        DBContract.SessionDataEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
 
             case CODE_RESPONSES:
                 cursor = dbOpenHelper.getReadableDatabase().query(
@@ -211,13 +246,32 @@ public class DPGameProvider extends ContentProvider {
 
             case CODE_MATERIALS:
 
-                long _id = dbOpenHelper.getWritableDatabase().insert(DBContract.MaterialsEntry.TABLE_NAME, null, contentValues);
+                long materialId = dbOpenHelper.getWritableDatabase().insert(DBContract.MaterialsEntry.TABLE_NAME, null, contentValues);
 
-                if (_id != -1) {
+                if (materialId != -1) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return Uri.parse(DBContract.PATH_MATERIALS + "/" + materialId);
+
+            case CODE_RESPONSES:
+                long responseId = dbOpenHelper.getWritableDatabase().insert(DBContract.ResponsesEntry.TABLE_NAME, null, contentValues);
+
+                if (responseId != -1) {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
 
-                return Uri.parse(DBContract.PATH_MATERIALS + "/" + _id);
+                return Uri.parse(DBContract.PATH_RESPONSES + "/" + responseId);
+
+            case CODE_SESSIONDATA:
+
+                long sessionId = dbOpenHelper.getWritableDatabase().insert(DBContract.SessionDataEntry.TABLE_NAME, null, contentValues);
+
+                if (sessionId != -1) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+
+                return Uri.parse(DBContract.PATH_SESSIONDATA + "/" + sessionId);
+
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

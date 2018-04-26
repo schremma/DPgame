@@ -56,7 +56,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
         Intent intent = getIntent();
 
-        int currentLevel = currentLevel = savedInstanceState != null ?
+        int currentLevel = savedInstanceState != null ?
                 savedInstanceState.getInt(KEY_LEVEL, LEVEL_DEFAULT) : -1;
 
         if (currentLevel == -1) {
