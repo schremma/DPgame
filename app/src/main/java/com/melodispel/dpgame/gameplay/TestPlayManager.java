@@ -20,6 +20,7 @@ public class TestPlayManager implements GamePlayManager {
 
     private int currentLevel;
     private GamePlayDisplay gamePlayDisplay;
+    private int lastItemId;
 
     private static final int STRING_VALUES_RT_INDEX = 0;
     private static final int STRING_VALUES_ACCURACY_INDEX = 1;
@@ -29,10 +30,11 @@ public class TestPlayManager implements GamePlayManager {
         return currentLevel;
     }
 
-    public TestPlayManager(Context context, GamePlayDisplay gamePlayDisplay, int currentLevel, boolean isPlayerSession) {
+    public TestPlayManager(Context context, GamePlayDisplay gamePlayDisplay, int currentLevel, int lastItemId) {
         this.context = context;
         this.currentLevel = currentLevel;
         this.gamePlayDisplay = gamePlayDisplay;
+        this.lastItemId = lastItemId;
 
         responseManager = new ResponseManager();
     }
@@ -54,15 +56,29 @@ public class TestPlayManager implements GamePlayManager {
     }
 
     public boolean onGameInitialized() {
-
         Cursor materialsCursor = initializeLevelMaterial(currentLevel);
+
         gamePlayDisplay.setMaterial(materialsCursor);
         return true;
     }
 
     private Cursor initializeLevelMaterial(int level) {
 
-        return getAllSentencesForLevel(currentLevel);
+        Cursor material = getAllSentencesForLevel(currentLevel);
+        if (!material.moveToFirst()) {
+            throw new IllegalArgumentException("No material was found for level");
+        }
+
+        if (lastItemId > -1) {
+            boolean found = false;
+
+            do {
+                found = material.getInt(material.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID)) == lastItemId;
+            } while (!found && material.moveToNext());
+            if (!found)
+                material.moveToFirst();
+        }
+        return material;
     }
 
     public void onNewPlayerResponse(int sentenceID, int responseTime, boolean accuracy) {
@@ -73,26 +89,8 @@ public class TestPlayManager implements GamePlayManager {
 
         saveLatestResponse(sentenceID, responseTime, accuracy);
 
-        if(responseManager.hasReachedProgressLimit()) {
-            progressToNextLevel();
-        }
     }
 
-    private void progressToNextLevel() {
-
-        if (getSentenceCountForLevel(currentLevel+1) > 0) {
-            currentLevel++;
-            Cursor newLevelMaterial = initializeLevelMaterial(currentLevel);
-
-            if (newLevelMaterial != null) {
-                responseManager.reset();
-                gamePlayDisplay.progressToNextLevel(newLevelMaterial, currentLevel);
-
-            } else {
-                throw  new IllegalArgumentException("No material could be retrieved for level " + currentLevel);
-            }
-        }
-    }
 
 
     @Override
@@ -138,9 +136,6 @@ public class TestPlayManager implements GamePlayManager {
         responseData.setRT(responseTime);
         responseData.setSentenceId(sentenceID);
         responseData.setTimestamp(System.currentTimeMillis());
-
-        // TODO save last response id, e.g. to shared preferences to respond to lifecycle changes
-
     }
 
     private Cursor getAllSentencesForLevel(int level) {
@@ -148,26 +143,6 @@ public class TestPlayManager implements GamePlayManager {
                 null, DBContract.MaterialsEntry.COLUMN_LEVEL + "=?",
                 new String[] {String.valueOf(level)},
                 DBContract.MaterialsEntry.COLUMN_SENTENCE_ID);
-    }
-
-
-    private int getResponseCountForLevel(int level) {
-        Cursor countCursor = context.getContentResolver().query(DBContract.ResponsesEntry.buildCountResponsesAtLevelUri(level),
-                null,null,null,null);
-        countCursor.moveToFirst();
-        return countCursor.getInt(0);
-    }
-
-    private long getSentenceCountForLevel(int level) {
-        Cursor countCursor = context.getContentResolver().query(DBContract.MaterialsEntry.buildCountSentencesAtLevelUri(level),
-                null,null,null,null);
-        countCursor.moveToFirst();
-        return countCursor.getInt(0);
-    }
-
-    private Cursor getLastPlayedSentenceIdOnLevel(int level) {
-        return context.getContentResolver().query(DBContract.ResponsesEntry.buildLastPlayedSentenceIdUri(1),
-                null,DBContract.ResponsesEntry.COLUMN_LEVEL + "=?", new String[]{String.valueOf(level)}, null);
     }
 
 

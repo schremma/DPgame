@@ -4,14 +4,13 @@ package com.melodispel.dpgame.gameplay;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.melodispel.dpgame.GameEnums;
 import com.melodispel.dpgame.data.CustomsGamePlay;
 import com.melodispel.dpgame.data.DBContract;
-import com.melodispel.dpgame.data.DBOpenHelper;
 import com.melodispel.dpgame.data.ResponseData;
 import com.melodispel.dpgame.data.SessionData;
 
@@ -71,29 +70,37 @@ public class GameManager implements GamePlayManager {
         // Continue with sentences that are higher than the last saved id
 
         Cursor materialsCursor = getAllSentencesForLevel(currentLevel);
+        if (!materialsCursor.moveToFirst()) {
+            throw new IllegalArgumentException("No material was found for level");
+        }
+
         int responsesCount = getResponseCountForLevel(currentLevel);
 
         Log.i(this.getClass().getSimpleName(), "Saved responses at current level: " + String.valueOf(responsesCount));
 
         if (responsesCount > 0) {
-            Cursor lastEntryOnLevel = getLastPlayedSentenceIdOnLevel(currentLevel);
+            Cursor lastEntryOnLevel = getLastPlayedItemIdOnLevel(currentLevel);
 
             if (lastEntryOnLevel.moveToFirst()) {
                 int lastPlayedSentenceId = lastEntryOnLevel.getInt(lastEntryOnLevel.getColumnIndex(DBContract.ResponsesEntry.COLUMN_SENTENCE_ID));
 
                 Log.i(this.getClass().getSimpleName(), "Last played id: " + String.valueOf(lastPlayedSentenceId));
 
-                if (materialsCursor.moveToFirst()) {
-                    boolean found = false;
-                    do {
+                boolean found = false;
+                do {
 
-                        found = materialsCursor.getInt(materialsCursor.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID)) == lastPlayedSentenceId;
+                    found = materialsCursor.getInt(materialsCursor.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID)) == lastPlayedSentenceId;
 
-                    } while (!found && materialsCursor.moveToNext());
-
-                } else {
-                    throw new IllegalArgumentException("No material could be retrieved from database for level: " + currentLevel);
+                } while (!found && materialsCursor.moveToNext());
+                if (!found)
+                    materialsCursor.moveToFirst();
+                else {
+                    GameEnums.GameState gameState = gamePlayDisplay.getGameState();
+                    if (!gameState.equals(gameState.RESPONDED)) {
+                        materialsCursor.moveToNext();
+                    }
                 }
+
             }
         }
         return materialsCursor;
@@ -208,8 +215,8 @@ public class GameManager implements GamePlayManager {
         return countCursor.getInt(0);
     }
 
-    private Cursor getLastPlayedSentenceIdOnLevel(int level) {
-        return context.getContentResolver().query(DBContract.ResponsesEntry.buildLastPlayedSentenceIdUri(1),
+    private Cursor getLastPlayedItemIdOnLevel(int level) {
+        return context.getContentResolver().query(DBContract.ResponsesEntry.buildLastPlayedItemsIdUri(1),
                 null,DBContract.ResponsesEntry.COLUMN_LEVEL + "=?", new String[]{String.valueOf(level)}, null);
     }
 

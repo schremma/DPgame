@@ -16,21 +16,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayActivity">
-
-        </activity>
-        <activity android:name=".LevelListActivity"
+        <activity android:name=".PlayActivity"></activity>
+        <activity
+            android:name=".LevelListActivity"
             android:label="@string/title_activity_level_list"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".MainActivity" />
         </activity>
 
         <provider
-            android:authorities="com.melodipsel.dpgame.provider"
             android:name=".data.DPGameProvider"
-            android:exported="false"/>
+            android:authorities="com.melodipsel.dpgame.provider"
+            android:exported="false" />
+
+        <activity android:name=".TestActivity"></activity>
     </application>
 
 </manifest>

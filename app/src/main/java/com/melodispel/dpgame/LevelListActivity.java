@@ -53,9 +53,15 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
     @Override
     public void onItemCLick(int level) {
 
-        Intent playIntent = new Intent(this, PlayActivity.class);
-        playIntent.putExtra(EXTRA_LEVEL, level);
-        startActivity(playIntent);
+        if (isPlayer) {
+            Intent playIntent = new Intent(this, PlayActivity.class);
+            playIntent.putExtra(EXTRA_LEVEL, level);
+            startActivity(playIntent);
+        } else {
+            Intent testIntent = new Intent(this, TestActivity.class);
+            testIntent.putExtra(EXTRA_LEVEL, level);
+            startActivity(testIntent);
+        }
 
     }
 

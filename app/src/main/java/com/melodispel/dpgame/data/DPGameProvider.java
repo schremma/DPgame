@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 public class DPGameProvider extends ContentProvider {
 
@@ -22,7 +21,7 @@ public class DPGameProvider extends ContentProvider {
     public static final int CODE_ALL_ACHIEVED_LEVELS = 106;
     public static final int CODE_ALL_AVAILABLE_LEVELS = 107;
     public static final int CODE_MATERIAL_WITH_ID = 108;
-    public static final int CODE_LAST_PLAYED_SENTENCE_ID = 110;
+    public static final int CODE_LAST_PLAYED_ITEM_ID = 110;
     public static final int CODE_RESPONSE_WITH_ID = 111;
     public static final int CODE_SESSIONDATA_WITH_ID = 112;
 
@@ -46,7 +45,7 @@ public class DPGameProvider extends ContentProvider {
 
         matcher.addURI(authority, DBContract.PATH_SESSIONDATA + "/" + DBContract.DISTINCT, CODE_ALL_ACHIEVED_LEVELS);
         matcher.addURI(authority, DBContract.PATH_MATERIALS + "/" + DBContract.DISTINCT, CODE_ALL_AVAILABLE_LEVELS);
-        matcher.addURI(authority, DBContract.PATH_RESPONSES + "/" + DBContract.TOP + "/#", CODE_LAST_PLAYED_SENTENCE_ID);
+        matcher.addURI(authority, DBContract.PATH_RESPONSES + "/" + DBContract.TOP + "/#", CODE_LAST_PLAYED_ITEM_ID);
 
         return matcher;
 
@@ -210,7 +209,7 @@ public class DPGameProvider extends ContentProvider {
                 break;
 
 
-            case CODE_LAST_PLAYED_SENTENCE_ID:
+            case CODE_LAST_PLAYED_ITEM_ID:
                 String limit = uri.getLastPathSegment();
 
                 cursor = dbOpenHelper.getReadableDatabase().query(DBContract.ResponsesEntry.TABLE_NAME,

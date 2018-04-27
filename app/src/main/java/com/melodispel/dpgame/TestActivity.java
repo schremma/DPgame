@@ -4,10 +4,10 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
-import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -15,18 +15,17 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.melodispel.dpgame.data.DBContract;
-import com.melodispel.dpgame.databinding.ActivityPlayBinding;
+import com.melodispel.dpgame.databinding.ActivityTestBinding;
 import com.melodispel.dpgame.gameplay.GameManager;
 import com.melodispel.dpgame.gameplay.GamePlayDisplay;
 import com.melodispel.dpgame.gameplay.GamePlayManager;
 import com.melodispel.dpgame.gameplay.ResultSummary;
-import com.melodispel.dpgame.GameEnums.*;
+import com.melodispel.dpgame.gameplay.TestPlayManager;
 
+public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
 
-public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
-
-    ActivityPlayBinding binding;
     private GamePlayManager gamePlayManager;
+    ActivityTestBinding binding;
 
     private Cursor materialsCursor;
     private int correctTargetViewId;
@@ -38,16 +37,17 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     private static final String KEY_RESPONSE_TIME = "rtKey";
     private static final String KEY_RESPONSE_MEASUREMENT_STARTED_TIME = "rtStartKey";
     private static final String KEY_MAINTAINED_RESULTS = "maintainedResultsKey";
+    private static final String KEY_LAST_ITEM_ID = "lastItemId";
 
     private static final int LEVEL_DEFAULT = 1;
-    private static final SessionState SESSION_STATE_DEFAULT = SessionState.NOT_STARTED_PLAYER;
+    private static final GameEnums.SessionState SESSION_STATE_DEFAULT = GameEnums.SessionState.NOT_STARTED_TESTER;
     public static final int RESPONSE_TIME_DEFAULT = -1000;
-    
-    private SessionState sessionState;
-    private GameState gameState;
-    
+
+    private GameEnums.SessionState sessionState;
+    private GameEnums.GameState gameState;
+
     private int lastItemId;
-    private ResponseAccuracy responseAccuracy;
+    private GameEnums.ResponseAccuracy responseAccuracy;
     private long startTimeOfResponse;
     private int responseTime;
 
@@ -60,57 +60,54 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
         int currentLevel = savedInstanceState != null ?
                 savedInstanceState.getInt(KEY_LEVEL, LEVEL_DEFAULT) : -1;
+        lastItemId = savedInstanceState != null ?
+                savedInstanceState.getInt(KEY_LAST_ITEM_ID, -1) : -1;
+
+        Log.i(getClass().getSimpleName(), "last item id: " + lastItemId);
 
         if (currentLevel == -1) {
             currentLevel = intent.getIntExtra(LevelListActivity.EXTRA_LEVEL, LEVEL_DEFAULT);
-        } else {
-            Log.i(getClass().getSimpleName(), "got level from intent");
         }
 
         if (savedInstanceState !=null) {
             startTimeOfResponse = savedInstanceState.getLong(KEY_RESPONSE_MEASUREMENT_STARTED_TIME, 0);
+
             responseTime = savedInstanceState.getInt(KEY_RESPONSE_TIME, 0);
+
             sessionState = savedInstanceState.containsKey(KEY_SESSION_STATE) ?
-                    (SessionState) savedInstanceState.get(KEY_SESSION_STATE) : SESSION_STATE_DEFAULT;
+                    (GameEnums.SessionState) savedInstanceState.get(KEY_SESSION_STATE) : SESSION_STATE_DEFAULT;
             gameState = savedInstanceState.containsKey(KEY_GAME_STATE) ?
-                    (GameState) savedInstanceState.get(KEY_GAME_STATE) : GameState.NOT_STARTED;
+                    (GameEnums.GameState) savedInstanceState.get(KEY_GAME_STATE) : GameEnums.GameState.NOT_STARTED;
             responseAccuracy = savedInstanceState.containsKey(KEY_RESPONSE_ACCURACY) ?
-                    (ResponseAccuracy) savedInstanceState.get(KEY_RESPONSE_ACCURACY) : ResponseAccuracy.NO_RESPONSE;
+                    (GameEnums.ResponseAccuracy) savedInstanceState.get(KEY_RESPONSE_ACCURACY) : GameEnums.ResponseAccuracy.NO_RESPONSE;
 
         }
         else {
-            gameState = GameState.NOT_STARTED;
+            gameState = GameEnums.GameState.NOT_STARTED;
             sessionState = SESSION_STATE_DEFAULT;
-            responseAccuracy = ResponseAccuracy.NO_RESPONSE;
+            responseAccuracy = GameEnums.ResponseAccuracy.NO_RESPONSE;
         }
 
         initGameArea();
 
-        boolean isPlayerSession = false;
-        if (sessionState.equals(SessionState.NOT_STARTED_PLAYER) || sessionState.equals(SessionState.IN_PROGRESS_PLAYER)) {
-            isPlayerSession = true;
-        }
-        gamePlayManager = new GameManager(this, this, currentLevel, isPlayerSession);
+        gamePlayManager = new TestPlayManager(this, this, currentLevel, lastItemId);
 
-        if (sessionState.equals(SessionState.NOT_STARTED_PLAYER) || sessionState.equals(SessionState.NOT_STARTED_TESTER)) {
+        if (sessionState.equals(GameEnums.SessionState.NOT_STARTED_TESTER)) {
 
-            if (sessionState.equals(SessionState.NOT_STARTED_PLAYER)) {
-                gamePlayManager.onNewSessionStarted(null);
-                sessionState = SessionState.IN_PROGRESS_PLAYER;
-            } else {
-                gamePlayManager.onNewSessionStarted(null);
-                sessionState = SessionState.IN_PROGRESS_TESTER;
-            }
+            gamePlayManager.onNewSessionStarted(null);
+            sessionState = GameEnums.SessionState.IN_PROGRESS_TESTER;
         }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_MAINTAINED_RESULTS)) {
             gamePlayManager.setAccumulatedResults(savedInstanceState.getStringArray(KEY_MAINTAINED_RESULTS));
         }
 
+
         if (gamePlayManager.onGameInitialized()) {
+
             displayResults();
 
-            if (!gameState.equals(GameState.NOT_STARTED)) {
+            if (!gameState.equals(GameEnums.GameState.NOT_STARTED)) {
 
                 if (gameState.equals(gameState.RESPONDED)) {
                     toogleResponseControls(false);
@@ -128,25 +125,23 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     }
 
     private void initGameArea() {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_play);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_test);
         binding.sentenceDisplay.targetArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gameState.equals(GameState.NOT_STARTED)) {
+                if (gameState.equals(GameEnums.GameState.NOT_STARTED)) {
                     startGame();
-                } else if (gameState.equals(GameState.RESPONDED) || gameState.equals(GameState.PROGRESSED_LEVEL)) {
+                } else if (gameState.equals(GameEnums.GameState.RESPONDED)) {
                     continueWithNextItem();
                 }
             }
         });
 
-        binding.sentenceDisplay.btnLeft.setOnTouchListener(new PlayActivity.TargetItemTouchListener());
-        binding.sentenceDisplay.btnRight.setOnTouchListener(new PlayActivity.TargetItemTouchListener());
-        binding.sentenceDisplay.targetArea.setOnDragListener(new PlayActivity.TargetAreaDragListener());
-
+        binding.sentenceDisplay.btnLeft.setOnTouchListener(new TargetItemTouchListener());
+        binding.sentenceDisplay.btnRight.setOnTouchListener(new TargetItemTouchListener());
+        binding.sentenceDisplay.targetArea.setOnDragListener(new TargetAreaDragListener());
 
         toogleResponseControls(false);
-
     }
 
 
@@ -154,7 +149,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         toogleResponseControls(true);
         showCurrentSentence();
         startResponseTImeMeasurement();
-        gameState = GameState.WAITING_RESPONSE;
+        gameState = GameEnums.GameState.WAITING_RESPONSE;
     }
 
     private void continueWithNextItem() {
@@ -162,7 +157,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         toogleResponseControls(true);
         showCurrentSentence();
         startResponseTImeMeasurement();
-        gameState = GameState.WAITING_RESPONSE;
+        gameState = GameEnums.GameState.WAITING_RESPONSE;
     }
 
     private void showCurrentSentence() {
@@ -202,7 +197,6 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     // returns ms
     private void startResponseTImeMeasurement() {
         startTimeOfResponse = SystemClock.elapsedRealtime();
-        Log.i(this.getClass().getSimpleName(), "Timer started");
     }
 
     private void stopResponseTimeMeasurement() {
@@ -217,6 +211,11 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         }
     }
 
+    private void resetPreviousResultsOnTestPanel() {
+        responseAccuracy = GameEnums.ResponseAccuracy.NO_RESPONSE;
+        responseTime = RESPONSE_TIME_DEFAULT;
+    }
+
     public void moveToNextItem() {
         if (materialsCursor == null || materialsCursor.getCount() == 0) {
             throw new IllegalArgumentException("No material found on moving to next sentence");
@@ -225,17 +224,13 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
             materialsCursor.moveToFirst();
         }
 
+        lastItemId = materialsCursor.getInt(materialsCursor.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID));
+
     }
 
     @Override
-    public GameState getGameState() {
+    public GameEnums.GameState getGameState() {
         return gameState;
-    }
-
-    public void moveToFirstItem() {
-        if (materialsCursor == null || materialsCursor.getCount() == 0 || !materialsCursor.moveToFirst()) {
-            throw new IllegalArgumentException("No material found on moving to next sentence");
-        }
     }
 
     private void showResultsOnTestPanel() {
@@ -252,7 +247,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
             default: info = "?";
         }
 
-        if (!responseAccuracy.equals(ResponseAccuracy.NO_RESPONSE)) {
+        if (!responseAccuracy.equals(GameEnums.ResponseAccuracy.NO_RESPONSE)) {
             info += ", " + responseTime + " ms";
         }
 
@@ -265,11 +260,8 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
     @Override
     public void progressToNextLevel(Cursor cursor, int level) {
-        materialsCursor = cursor;
-        gameState = GameState.PROGRESSED_LEVEL;
 
-        Toast.makeText(getApplicationContext(), "Progressed to level "
-                + String.valueOf(gamePlayManager.getCurrentLevel()) + "!", Toast.LENGTH_SHORT).show();
+        throw new RuntimeException("Progress to next level is not implemented for Test sessions");
     }
 
     private void resetSentenceDisplay() {
@@ -323,9 +315,9 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
                     // get the dragged items id to check if it is the correct answer
                     View dragView = (View) event.getLocalState();
                     if (dragView.getId() == correctTargetViewId) {
-                        responseAccuracy = ResponseAccuracy.CORRECT;
+                        responseAccuracy = GameEnums.ResponseAccuracy.CORRECT;
                     } else {
-                        responseAccuracy = ResponseAccuracy.WRONG;
+                        responseAccuracy = GameEnums.ResponseAccuracy.WRONG;
                     }
 
                     onPlayerResponse();
@@ -342,11 +334,11 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
 
     private void onPlayerResponse() {
-        gameState = GameState.RESPONDED;
+        gameState = GameEnums.GameState.RESPONDED;
 
         int sentenceID = materialsCursor.getInt(materialsCursor.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID));
         boolean accuracy = false;
-        if (responseAccuracy.equals(ResponseAccuracy.CORRECT))
+        if (responseAccuracy.equals(GameEnums.ResponseAccuracy.CORRECT))
             accuracy = true;
         gamePlayManager.onNewPlayerResponse(sentenceID, responseTime, accuracy);
 
@@ -380,6 +372,10 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         super.onSaveInstanceState(outState);
 
         outState.putInt(KEY_LEVEL, gamePlayManager.getCurrentLevel());
+        outState.putInt(KEY_LAST_ITEM_ID, lastItemId);
+
+        Log.i(getClass().getSimpleName(), "Saved last item id: " + lastItemId);
+
         outState.putSerializable(KEY_SESSION_STATE, sessionState);
         outState.putSerializable(KEY_GAME_STATE, gameState);
 
@@ -395,5 +391,3 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     }
 
 }
-
-

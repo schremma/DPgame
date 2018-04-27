@@ -72,7 +72,7 @@ public final class DBContract {
         }
 
 
-        public static Uri buildLastPlayedSentenceIdUri(int limit) {
+        public static Uri buildLastPlayedItemsIdUri(int limit) {
             return CONTENT_URI.buildUpon().
                     appendPath(TOP).
                     appendPath(String.valueOf(limit)).
