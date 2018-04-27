@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditTextPreference
+        android:defaultValue="@integer/pref_default_nbr_of_responses_for_result_calculation"
+        android:inputType="numberDecimal"
+        android:key="@string/pref_key_number_of_responses_for_results"
+        android:singleLine="true"
+        android:title="@string/pref_label_number_of_responses" />
+
+    <EditTextPreference
+        android:defaultValue="@integer/pref_default_progression_limit"
+        android:inputType="numberDecimal"
+        android:key="@string/pref_key_progression_limit"
+        android:singleLine="true"
+        android:title="@string/pref_label_progression_limit" />
+
+</PreferenceScreen>

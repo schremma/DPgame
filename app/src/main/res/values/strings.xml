@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">DP Game</string>
     <string name="title_activity_level_list">Available levels</string>
+
+    <string name="pref_key_number_of_responses_for_results" translatable="false">numberOfResponsesForResultCalculation</string>
+    <string name="pref_label_number_of_responses">Number of responses used for result calculation</string>
+    <string name="pref_key_progression_limit" translatable="false">progressionLimit</string>
+    <string name="pref_label_progression_limit">Percentage limit for level progression</string>
 </resources>

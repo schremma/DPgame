@@ -16,7 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayActivity"></activity>
+        <activity android:name=".PlayActivity" />
         <activity
             android:name=".LevelListActivity"
             android:label="@string/title_activity_level_list"
@@ -31,7 +31,8 @@
             android:authorities="com.melodipsel.dpgame.provider"
             android:exported="false" />
 
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TestActivity" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>
