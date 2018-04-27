@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +18,7 @@ import com.melodispel.dpgame.databinding.ActivityPlayBinding;
 import com.melodispel.dpgame.gameplay.GameManager;
 import com.melodispel.dpgame.gameplay.GamePlayDisplay;
 import com.melodispel.dpgame.gameplay.GamePlayManager;
+import com.melodispel.dpgame.gameplay.ResponseTimer;
 import com.melodispel.dpgame.gameplay.ResultSummary;
 import com.melodispel.dpgame.GameEnums.*;
 
@@ -35,21 +35,17 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     private static final String KEY_GAME_STATE = "gameStateKey";
     private static final String KEY_SESSION_STATE = "sessionStateKey";
     private static final String KEY_RESPONSE_ACCURACY = "accuracyKey";
-    private static final String KEY_RESPONSE_TIME = "rtKey";
-    private static final String KEY_RESPONSE_MEASUREMENT_STARTED_TIME = "rtStartKey";
     private static final String KEY_MAINTAINED_RESULTS = "maintainedResultsKey";
+    private static final String KEY_RESPONSE_TIMER = "responseTimer";
 
     private static final int LEVEL_DEFAULT = 1;
     private static final SessionState SESSION_STATE_DEFAULT = SessionState.NOT_STARTED_PLAYER;
-    public static final int RESPONSE_TIME_DEFAULT = -1000;
     
     private SessionState sessionState;
     private GameState gameState;
-    
-    private int lastItemId;
+
     private ResponseAccuracy responseAccuracy;
-    private long startTimeOfResponse;
-    private int responseTime;
+    private ResponseTimer responseTimer;
 
 
     @Override
@@ -68,8 +64,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         }
 
         if (savedInstanceState !=null) {
-            startTimeOfResponse = savedInstanceState.getLong(KEY_RESPONSE_MEASUREMENT_STARTED_TIME, 0);
-            responseTime = savedInstanceState.getInt(KEY_RESPONSE_TIME, 0);
+            responseTimer = (ResponseTimer) savedInstanceState.getParcelable(KEY_RESPONSE_TIMER);
             sessionState = savedInstanceState.containsKey(KEY_SESSION_STATE) ?
                     (SessionState) savedInstanceState.get(KEY_SESSION_STATE) : SESSION_STATE_DEFAULT;
             gameState = savedInstanceState.containsKey(KEY_GAME_STATE) ?
@@ -83,6 +78,10 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
             sessionState = SESSION_STATE_DEFAULT;
             responseAccuracy = ResponseAccuracy.NO_RESPONSE;
         }
+
+        if (responseTimer == null)
+            responseTimer = new ResponseTimer();
+        Log.i(getClass().getName(), responseTimer.toString());
 
         initGameArea();
 
@@ -153,7 +152,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     private void startGame() {
         toogleResponseControls(true);
         showCurrentSentence();
-        startResponseTImeMeasurement();
+        responseTimer.startResponseTImeMeasurement();
         gameState = GameState.WAITING_RESPONSE;
     }
 
@@ -161,7 +160,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         moveToNextItem();
         toogleResponseControls(true);
         showCurrentSentence();
-        startResponseTImeMeasurement();
+        responseTimer.startResponseTImeMeasurement();
         gameState = GameState.WAITING_RESPONSE;
     }
 
@@ -198,24 +197,6 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         }
     }
 
-    // elapsedRealTime for interval timing: monotonicity guaranteed, incremented even in CPU sleep mode,
-    // returns ms
-    private void startResponseTImeMeasurement() {
-        startTimeOfResponse = SystemClock.elapsedRealtime();
-        Log.i(this.getClass().getSimpleName(), "Timer started");
-    }
-
-    private void stopResponseTimeMeasurement() {
-
-        // RT should fit into an integer unless something went wrong
-        long elapsedTime = SystemClock.elapsedRealtime() - startTimeOfResponse;
-        if (elapsedTime < Integer.MIN_VALUE || elapsedTime > Integer.MAX_VALUE) {
-            responseTime = RESPONSE_TIME_DEFAULT;
-        }
-        else {
-            responseTime = (int)elapsedTime;
-        }
-    }
 
     public void moveToNextItem() {
         if (materialsCursor == null || materialsCursor.getCount() == 0) {
@@ -253,7 +234,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         }
 
         if (!responseAccuracy.equals(ResponseAccuracy.NO_RESPONSE)) {
-            info += ", " + responseTime + " ms";
+            info += ", " + responseTimer.getResponseTime() + " ms";
         }
 
         binding.testerPanel.tvInfo.setText(info);
@@ -308,7 +289,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
 
                     // stop timer here
-                    stopResponseTimeMeasurement();
+                    responseTimer.stopResponseTimeMeasurement();
 
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
@@ -348,7 +329,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         boolean accuracy = false;
         if (responseAccuracy.equals(ResponseAccuracy.CORRECT))
             accuracy = true;
-        gamePlayManager.onNewPlayerResponse(sentenceID, responseTime, accuracy);
+        gamePlayManager.onNewPlayerResponse(sentenceID, responseTimer.getResponseTime(), accuracy);
 
         displayResults();
         showResultsOnTestPanel();
@@ -386,12 +367,9 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         if (!gameState.equals(GameEnums.GameState.NOT_STARTED)) {
             outState.putStringArray(KEY_MAINTAINED_RESULTS, gamePlayManager.getAccumulatedResults());
             outState.putSerializable(KEY_RESPONSE_ACCURACY, responseAccuracy);
-            outState.putInt(KEY_RESPONSE_TIME, responseTime);
-
-            if (gameState.equals(GameEnums.GameState.WAITING_RESPONSE)) {
-                outState.putLong(KEY_RESPONSE_MEASUREMENT_STARTED_TIME, startTimeOfResponse);
-            }
         }
+
+        outState.putParcelable(KEY_RESPONSE_TIMER, responseTimer);
     }
 
 }
