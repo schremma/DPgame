@@ -13,8 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.melodispel.dpgame.data.DBContract;
+
+import java.util.zip.Inflater;
 
 public class LevelListActivity extends AppCompatActivity implements LevelAdapter.LevelAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -96,5 +101,26 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         levelAdapter.setData(null);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.levels_admin, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.settings_admin) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
