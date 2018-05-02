@@ -3,15 +3,12 @@ package com.melodispel.dpgame.gameplay;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.melodispel.dpgame.GameEnums;
-import com.melodispel.dpgame.R;
 import com.melodispel.dpgame.data.CustomsGamePlay;
 import com.melodispel.dpgame.data.DBContract;
 import com.melodispel.dpgame.data.DPGamePreferences;
@@ -40,17 +37,13 @@ public class GameManager implements GamePlayManager {
         this.gamePlayDisplay = gamePlayDisplay;
         this.isPlayerSession = isPlayerSession;
 
-/*        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        int responseCount = sp.getInt(context.getResources().getString(R.string.pref_key_number_of_responses_for_results),
-                context.getResources().getInteger(R.integer.pref_default_nbr_of_responses_for_result_calculation));
-        int progressionLimit = sp.getInt(context.getResources().getString(R.string.pref_key_progression_limit),
-                context.getResources().getInteger(R.integer.pref_default_progression_limit));*/
 
         int responseCount = DPGamePreferences.getPreferredNumberOfResponsesForResultCalculation(context);
-        int progressionLimit = DPGamePreferences.getPreferredNumberOfResponsesForResultCalculation(context);
+        int progressionLimit = DPGamePreferences.getPreferredProgressionLimit(context);
 
-        Log.i(getClass().getSimpleName(), "Initiating resposne manager with setting: " + String.valueOf(responseCount) +
+        Log.i(getClass().getSimpleName(), "Initiating response manager with setting: " + String.valueOf(responseCount) +
         String.valueOf(progressionLimit));
+
         responseManager = new ResponseManager(responseCount, progressionLimit);
     }
 

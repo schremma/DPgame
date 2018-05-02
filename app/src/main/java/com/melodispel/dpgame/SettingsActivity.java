@@ -14,7 +14,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * When the Up button os pressed, we always want to navigate to previous activity that the user
+     * When the Up button is pressed, we always want to navigate to previous activity that the user
      * came from when opening settings, not simply to the same parent activity.
      * @param item
      * @return

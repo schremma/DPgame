@@ -8,8 +8,8 @@ import java.util.LinkedList;
 // TODO create an interface implemented by ResponseManager
 public class ResponseManager {
 
-    private LinkedList<Integer> rtQueue;
-    private LinkedList<Integer> accuracyQueue;
+    private LinkedList<Integer> rtQueue = new LinkedList<>();
+    private LinkedList<Integer> accuracyQueue = new LinkedList<>();
     private int cumulatedRT;
     private int cumulatedAccuracy;
 
@@ -22,9 +22,6 @@ public class ResponseManager {
         numberOfResponsesForResultCalculation = 4;
         accuracyLimitPercentage = 80;
         queue_max_limit = numberOfResponsesForResultCalculation;
-
-        accuracyQueue = new LinkedList<>();
-        rtQueue = new LinkedList<>();
     }
 
     public ResponseManager(int numberOfResponsesForResultCalculation, int accuracyLimitPercentage) {

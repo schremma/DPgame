@@ -6,4 +6,8 @@
     <string name="pref_label_number_of_responses">Response count for progression</string>
     <string name="pref_key_progression_limit" translatable="false">progressionLimit</string>
     <string name="pref_label_progression_limit">Progression limit (%)</string>
+
+    <string name="notifications_instruction">Notify me if I have not played for:</string>
+    <string name="notification_set">Set</string>
+    <string name="notification_cancel">Cancel</string>
 </resources>

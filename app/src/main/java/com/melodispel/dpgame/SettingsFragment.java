@@ -29,6 +29,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
     private void setPreferenceSummary(Preference preference, Object value) {
         preference.setSummary(value.toString());
     }

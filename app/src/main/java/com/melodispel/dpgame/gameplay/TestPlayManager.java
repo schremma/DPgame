@@ -8,8 +8,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.melodispel.dpgame.data.CustomsGamePlay;
 import com.melodispel.dpgame.data.DBContract;
+import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.data.ResponseData;
 import com.melodispel.dpgame.data.SessionData;
 
@@ -36,7 +36,9 @@ public class TestPlayManager implements GamePlayManager {
         this.gamePlayDisplay = gamePlayDisplay;
         this.lastItemId = lastItemId;
 
-        responseManager = new ResponseManager();
+        int responseCount = DPGamePreferences.getPreferredNumberOfResponsesForResultCalculation(context);
+        int progressionLimit = DPGamePreferences.getPreferredProgressionLimit(context);
+        responseManager = new ResponseManager(responseCount, progressionLimit);
     }
 
     @Override
