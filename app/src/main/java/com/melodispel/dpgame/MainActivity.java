@@ -13,7 +13,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
+import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityMainBinding;
+import com.melodispel.dpgame.reminders.ReminderUtilities;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnSet = dialogView.findViewById(R.id.btn_set);
 
         final NumberPicker unitPicker = dialogView.findViewById(R.id.notificationUnitPicker);
-        final String[] values= {"minutes", "hours","days","weeks"};
+        final String[] values= {ReminderUtilities.MINUTE, ReminderUtilities.HOUR, ReminderUtilities.DAY,ReminderUtilities.WEEK};
         unitPicker.setDisplayedValues(values);
         unitPicker.setMinValue(0);
         unitPicker.setMaxValue(values.length-1);
@@ -112,6 +114,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onNotificationSet(int time, String interval) {
+        if (!DPGamePreferences.getNotificationIntervalUnit(this).equals(interval)
+                && (DPGamePreferences.getNotificationInterval(this) != time))
 
+        DPGamePreferences.setNotificationIntervalTime(this, time);
+        DPGamePreferences.setNotificationIntervalUnit(this, interval);
+
+        if (time > 0) {
+            ReminderUtilities.scheduleFirebaseJobDispatcherForReminder(this, time, interval);
+        } else {
+            ReminderUtilities.cancelFirebaseJobDispatcherForReminder(this);
+        }
     }
 }

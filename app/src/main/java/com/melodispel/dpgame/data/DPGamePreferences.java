@@ -3,15 +3,47 @@ package com.melodispel.dpgame.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.melodispel.dpgame.R;
 
 public class DPGamePreferences {
 
 
+    public static void setNotificationIntervalUnit(Context context, String intervalUnit) {
 
-    public static void SetNumberOfResponsesForResultCalculation(Context context, int numberOfResponses) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putString(context.getResources().getString(R.string.pref_key_notification_interval_unit), intervalUnit);
+        editor.apply();
+    }
+
+    public static void setNotificationIntervalTime(Context context, int intervalTime) {
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putInt(context.getResources().getString(R.string.pref_key_notification_interval), intervalTime);
+        editor.apply();
+    }
+
+    public static int getNotificationInterval(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sp.getInt(context.getResources().getString(R.string.pref_key_notification_interval),
+                context.getResources().getInteger(R.integer.pref_default_notification_interval));
+
+    }
+
+    public static String getNotificationIntervalUnit(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sp.getString(context.getResources().getString(R.string.pref_key_notification_interval_unit),
+                context.getResources().getString(R.string.pref_default_notification_interval_unit));
+
+    }
+
+    public static void setNumberOfResponsesForResultCalculation(Context context, int numberOfResponses) {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
@@ -36,9 +68,6 @@ public class DPGamePreferences {
                 String.valueOf(context.getResources().getInteger(R.integer.pref_default_nbr_of_responses_for_result_calculation)));
 
 
-        Log.i("GamePreferences", String.valueOf(value));
-
-
         try {
             int nbr = Integer.parseInt(value);
 
@@ -54,8 +83,6 @@ public class DPGamePreferences {
         String value = sp.getString(context.getResources().getString(R.string.pref_key_progression_limit),
                 String.valueOf(context.getResources().getInteger(R.integer.pref_default_progression_limit)));
 
-
-        Log.i("GamePreferences", String.valueOf(value));
 
         try {
             int nbr = Integer.parseInt(value);

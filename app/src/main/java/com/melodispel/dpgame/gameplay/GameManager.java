@@ -14,6 +14,7 @@ import com.melodispel.dpgame.data.DBContract;
 import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.data.ResponseData;
 import com.melodispel.dpgame.data.SessionData;
+import com.melodispel.dpgame.utitlities.DPGameTimeUtils;
 
 public class GameManager implements GamePlayManager {
 
@@ -50,7 +51,7 @@ public class GameManager implements GamePlayManager {
     @Override
     public void onNewSessionStarted(String sessionCustoms) {
         SessionData sessionData = new SessionData();
-        sessionData.setStartTimeStamp(System.currentTimeMillis());
+        sessionData.setStartTimeStamp(DPGameTimeUtils.getTimeStampNow());
         sessionData.setIsPlayerSession(isPlayerSession);
         sessionData.setLevel(currentLevel);
 
@@ -143,7 +144,7 @@ public class GameManager implements GamePlayManager {
         }
 
         SessionData sessionData = new SessionData();
-        sessionData.setStartTimeStamp(System.currentTimeMillis());
+        sessionData.setStartTimeStamp(DPGameTimeUtils.getTimeStampNow());
         sessionData.setIsPlayerSession(isPlayerSession);
         sessionData.setLevel(currentLevel);
 
@@ -195,7 +196,7 @@ public class GameManager implements GamePlayManager {
         responseData.setLevel(currentLevel);
         responseData.setRT(responseTime);
         responseData.setSentenceId(sentenceID);
-        responseData.setTimestamp(System.currentTimeMillis());
+        responseData.setTimestamp(DPGameTimeUtils.getTimeStampNow());
 
         new SaveResponseAsyncTask().execute(responseData);
 
@@ -224,8 +225,9 @@ public class GameManager implements GamePlayManager {
     }
 
     private Cursor getLastPlayedItemIdOnLevel(int level) {
-        return context.getContentResolver().query(DBContract.ResponsesEntry.buildLastPlayedItemsIdUri(1),
-                null,DBContract.ResponsesEntry.COLUMN_LEVEL + "=?", new String[]{String.valueOf(level)}, null);
+        String[] projection = new String[] {DBContract.ResponsesEntry.COLUMN_SENTENCE_ID};
+        return context.getContentResolver().query(DBContract.ResponsesEntry.buildLastPlayedItemsUri(1),
+                projection,DBContract.ResponsesEntry.COLUMN_LEVEL + "=?", new String[]{String.valueOf(level)}, null);
     }
 
     private class SaveResponseAsyncTask extends AsyncTask<ResponseData, Void, Void> {

@@ -10,8 +10,8 @@ import android.util.Log;
 
 import com.melodispel.dpgame.data.DBContract;
 import com.melodispel.dpgame.data.DPGamePreferences;
-import com.melodispel.dpgame.data.ResponseData;
 import com.melodispel.dpgame.data.SessionData;
+import com.melodispel.dpgame.utitlities.DPGameTimeUtils;
 
 public class TestPlayManager implements GamePlayManager {
 
@@ -44,7 +44,7 @@ public class TestPlayManager implements GamePlayManager {
     @Override
     public void onNewSessionStarted(String sessionCustoms) {
         SessionData sessionData = new SessionData();
-        sessionData.setStartTimeStamp(System.currentTimeMillis());
+        sessionData.setStartTimeStamp(DPGameTimeUtils.getTimeStampNow());
         sessionData.setIsPlayerSession(IS_PLAYER_SESSION);
         sessionData.setLevel(currentLevel);
 
@@ -89,8 +89,6 @@ public class TestPlayManager implements GamePlayManager {
         Log.i(getClass().getSimpleName(), "Rts for stats: " + responseManager.rtValuesToString());
         Log.i(getClass().getSimpleName(), "Accuracy values for stats: " + responseManager.accuracyValuesToString());
 
-        saveLatestResponse(sentenceID, responseTime, accuracy);
-
     }
 
 
@@ -130,15 +128,6 @@ public class TestPlayManager implements GamePlayManager {
         return new ResultSummary(accuracyPercent, rtRounded);
     }
 
-    private void saveLatestResponse(int sentenceID, int responseTime, boolean accuracy) {
-        ResponseData responseData = new ResponseData();
-        responseData.setAccuracy(accuracy);
-
-        responseData.setLevel(currentLevel);
-        responseData.setRT(responseTime);
-        responseData.setSentenceId(sentenceID);
-        responseData.setTimestamp(System.currentTimeMillis());
-    }
 
     private Cursor getAllSentencesForLevel(int level) {
         return context.getContentResolver().query(DBContract.MaterialsEntry.CONTENT_URI,

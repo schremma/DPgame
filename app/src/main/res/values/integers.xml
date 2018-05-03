@@ -2,4 +2,5 @@
 <resources>
     <integer name="pref_default_nbr_of_responses_for_result_calculation">4</integer>
     <integer name="pref_default_progression_limit">80</integer>
+    <integer name="pref_default_notification_interval">0</integer>
 </resources>

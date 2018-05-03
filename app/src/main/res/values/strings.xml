@@ -6,6 +6,9 @@
     <string name="pref_label_number_of_responses">Response count for progression</string>
     <string name="pref_key_progression_limit" translatable="false">progressionLimit</string>
     <string name="pref_label_progression_limit">Progression limit (%)</string>
+    <string name="pref_key_notification_interval_unit">notificationIntervalUnit</string>
+    <string name="pref_default_notification_interval_unit">days</string>
+    <string name="pref_key_notification_interval">notificationInterval</string>
 
     <string name="notifications_instruction">Notify me if I have not played for:</string>
     <string name="notification_set">Set</string>
