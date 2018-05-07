@@ -33,6 +33,13 @@
 
         <activity android:name=".TestActivity" />
         <activity android:name=".SettingsActivity"></activity>
+
+        <service android:name=".reminders.PlayReminderJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

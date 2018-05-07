@@ -3,6 +3,7 @@ package com.melodispel.dpgame.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.melodispel.dpgame.R;
 
@@ -22,16 +23,20 @@ public class DPGamePreferences {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
-
+        
         editor.putInt(context.getResources().getString(R.string.pref_key_notification_interval), intervalTime);
         editor.apply();
+
     }
 
     public static int getNotificationInterval(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
-        return sp.getInt(context.getResources().getString(R.string.pref_key_notification_interval),
-                context.getResources().getInteger(R.integer.pref_default_notification_interval));
+        int interval = sp.getInt(context.getResources().getString(R.string.pref_key_notification_interval),context.getResources().getInteger(R.integer.pref_default_notification_interval));
+
+        Log.i("DPGamePreferences", "interval: " + interval);
+
+        return interval;
 
     }
 

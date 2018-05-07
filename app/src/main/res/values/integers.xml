@@ -3,4 +3,5 @@
     <integer name="pref_default_nbr_of_responses_for_result_calculation">4</integer>
     <integer name="pref_default_progression_limit">80</integer>
     <integer name="pref_default_notification_interval">0</integer>
+    <integer name="pref_notification_interval_not_set">@integer/pref_default_notification_interval</integer>
 </resources>

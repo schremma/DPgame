@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityMainBinding;
@@ -76,15 +78,28 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.setTitle("Set notification");
 
-        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
-        Button btnSet = dialogView.findViewById(R.id.btn_set);
+        Button btnCancel = dialogView.findViewById(R.id.btn_notification_cancel);
+        Button btnSet = dialogView.findViewById(R.id.btn_notification_set);
+        TextView tvInfo = dialogView.findViewById(R.id.tv_notification_info);
+
+        String notificationInfo = "";
+        int setInterval = DPGamePreferences.getNotificationInterval(this);
+        if (setInterval != R.integer.pref_notification_interval_not_set) {
+            String unit = DPGamePreferences.getNotificationIntervalUnit(this);
+            notificationInfo = getString(R.string.notifications_instruction_for_set_notification) + " "
+            + ReminderUtilities.getLocalizedStringForIntervalUnit(this, unit, setInterval);
+        } else {
+            notificationInfo = getString(R.string.notifications_instruction_for_new_notification);
+            btnCancel.setVisibility(View.INVISIBLE);
+        }
+        tvInfo.setText(notificationInfo);
+
 
         final NumberPicker unitPicker = dialogView.findViewById(R.id.notificationUnitPicker);
-        final String[] values= {ReminderUtilities.MINUTE, ReminderUtilities.HOUR, ReminderUtilities.DAY,ReminderUtilities.WEEK};
+        final String[] values= ReminderUtilities.getIntervalUnits(this);
         unitPicker.setDisplayedValues(values);
         unitPicker.setMinValue(0);
         unitPicker.setMaxValue(values.length-1);
-        unitPicker.setValue(2);
         unitPicker.setWrapSelectorWheel(true);  //Whether the selector wheel wraps when reaching the min/max value.
 
         final NumberPicker numberPicker = dialogView.findViewById(R.id.notificationNumberPicker);
@@ -95,13 +110,15 @@ public class MainActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                onNotificationCanceled();
                 dialog.dismiss();
             }
         });
         btnSet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onNotificationSet(numberPicker.getValue(), String.valueOf(unitPicker.getValue()));
+                String unit = ReminderUtilities.getStringForIntervalUnitIndex(unitPicker.getValue());
+                onNotificationSet(numberPicker.getValue(), unit);
                 dialog.dismiss();
             }
         });
@@ -114,16 +131,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onNotificationSet(int time, String interval) {
-        if (!DPGamePreferences.getNotificationIntervalUnit(this).equals(interval)
-                && (DPGamePreferences.getNotificationInterval(this) != time))
 
         DPGamePreferences.setNotificationIntervalTime(this, time);
         DPGamePreferences.setNotificationIntervalUnit(this, interval);
 
         if (time > 0) {
+            Log.i("MainActivity", "Setting new notification: " + interval);
             ReminderUtilities.scheduleFirebaseJobDispatcherForReminder(this, time, interval);
         } else {
             ReminderUtilities.cancelFirebaseJobDispatcherForReminder(this);
         }
+
+    }
+
+    private void onNotificationCanceled() {
+        DPGamePreferences.setNotificationIntervalTime(this, R.integer.pref_notification_interval_not_set);
+        ReminderUtilities.cancelFirebaseJobDispatcherForReminder(MainActivity.this);
     }
 }

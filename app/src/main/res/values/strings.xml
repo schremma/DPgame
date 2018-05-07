@@ -10,7 +10,34 @@
     <string name="pref_default_notification_interval_unit">days</string>
     <string name="pref_key_notification_interval">notificationInterval</string>
 
-    <string name="notifications_instruction">Notify me if I have not played for:</string>
+    <string name="notifications_instruction_for_new_notification">Notify me if I have not played for:</string>
+    <string name="notifications_instruction_for_set_notification">I will be notified if I have not played for:</string>
     <string name="notification_set">Set</string>
-    <string name="notification_cancel">Cancel</string>
+    <string name="notification_cancel">Cancel reminder</string>
+
+    <string name="reminder_title">Time for some Swedish grammar!</string>
+    <string name="reminder_text_start">You have not played in</string>
+
+    <string name="minute_unit">minutes</string>
+    <string name="hour_unit">hours</string>
+    <string name="day_unit">days</string>
+    <string name="week_unit">weeks</string>
+
+    <plurals name="minute">
+        <item quantity="one">one minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="one">one hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="one">one day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="week">
+        <item quantity="one">one week</item>
+        <item quantity="other">%d weeks</item>
+    </plurals>
+
 </resources>

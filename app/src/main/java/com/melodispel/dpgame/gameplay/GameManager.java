@@ -198,6 +198,8 @@ public class GameManager implements GamePlayManager {
         responseData.setSentenceId(sentenceID);
         responseData.setTimestamp(DPGameTimeUtils.getTimeStampNow());
 
+        Log.i(getClass().getSimpleName(), "Last item time stamp: " + responseData.getTimestamp());
+
         new SaveResponseAsyncTask().execute(responseData);
 
     }

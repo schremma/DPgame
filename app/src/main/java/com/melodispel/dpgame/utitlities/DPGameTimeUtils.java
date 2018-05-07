@@ -23,13 +23,15 @@ public final class DPGameTimeUtils {
      */
     public static long getMillisPassedSinceLastGame(Context context) {
 
-        String[] projection = new String[] {DBContract.ResponsesEntry.COLUMN_TIME_STAMP};
+        //String[] projection = new String[] {DBContract.ResponsesEntry.COLUMN_TIME_STAMP};
         Cursor cursor = context.getContentResolver().query(DBContract.ResponsesEntry.buildLastPlayedItemsUri(1),
-                projection,null, null, null);
+                null,null, null, null);
 
         if (cursor.moveToFirst()) {
-            int lastPlayedInMillis = cursor.getInt(cursor.getColumnIndex(DBContract.ResponsesEntry.COLUMN_TIME_STAMP));
+            long lastPlayedInMillis = cursor.getLong(cursor.getColumnIndex(DBContract.ResponsesEntry.COLUMN_TIME_STAMP));
             long intervalMillis = System.currentTimeMillis()-lastPlayedInMillis;
+
+
             return intervalMillis;
 
         } else {
