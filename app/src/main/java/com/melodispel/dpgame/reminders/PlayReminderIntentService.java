@@ -9,7 +9,7 @@ import com.melodispel.dpgame.MainActivity;
 
 public class PlayReminderIntentService extends IntentService {
 
-    PlayReminderIntentService() {super("PlayReminderIntentService");}
+    public PlayReminderIntentService() {super("PlayReminderIntentService");}
 
     public static final String CANCEL_PLAY_REMINDER = "cancelPlayReminder";
     public static final String PLAY_NOW = "playNow";
