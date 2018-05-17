@@ -18,6 +18,9 @@
     <string name="reminder_title">Time for some Swedish grammar!</string>
     <string name="reminder_text_start">You have not played in</string>
 
+    <string name="response_time_unit">ms</string>
+    <string name="accuracy_unit">%</string>
+
     <string name="minute_unit">minutes</string>
     <string name="hour_unit">hours</string>
     <string name="day_unit">days</string>
@@ -39,5 +42,10 @@
         <item quantity="one">one week</item>
         <item quantity="other">%d weeks</item>
     </plurals>
+
+    <string name="label_play_last_response">Last response</string>
+    <string name="label_accumulated_results">Accumulated results</string>
+    <string name="label_speed">Speed:</string>
+    <string name="label_accuracy">Accuracy:</string>
 
 </resources>

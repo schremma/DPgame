@@ -24,6 +24,7 @@ public class DPGameProvider extends ContentProvider {
     public static final int CODE_LAST_PLAYED_ITEM = 110;
     public static final int CODE_RESPONSE_WITH_ID = 111;
     public static final int CODE_SESSIONDATA_WITH_ID = 112;
+    public static final int CODE_AVERAGE_RESPONSES = 113;
 
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -46,6 +47,7 @@ public class DPGameProvider extends ContentProvider {
         matcher.addURI(authority, DBContract.PATH_SESSIONDATA + "/" + DBContract.DISTINCT, CODE_ALL_ACHIEVED_LEVELS);
         matcher.addURI(authority, DBContract.PATH_MATERIALS + "/" + DBContract.DISTINCT, CODE_ALL_AVAILABLE_LEVELS);
         matcher.addURI(authority, DBContract.PATH_RESPONSES + "/" + DBContract.TOP + "/#", CODE_LAST_PLAYED_ITEM);
+        matcher.addURI(authority, DBContract.PATH_RESPONSES + "/" + DBContract.AVERAGE, CODE_AVERAGE_RESPONSES);
 
         return matcher;
 
@@ -139,6 +141,15 @@ public class DPGameProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                break;
+
+            case CODE_AVERAGE_RESPONSES:
+                String query = "SELECT AVG("+ DBContract.ResponsesEntry.COLUMN_RT +"), AVG("+ DBContract.ResponsesEntry.COLUMN_ACCURACY +"),"+
+                        DBContract.ResponsesEntry.COLUMN_LEVEL
+                        + " FROM "
+                        + DBContract.ResponsesEntry.TABLE_NAME + " GROUP BY " + DBContract.ResponsesEntry.COLUMN_LEVEL;
+                cursor = dbOpenHelper.getReadableDatabase().rawQuery(query, null);
+
                 break;
 
             case CODE_SESSIONDATA:

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         binding.btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent playIntent = new Intent(getApplicationContext(), LevelListActivity.class);
+                Intent playIntent = new Intent(MainActivity.this, LevelListActivity.class);
                 playIntent.putExtra(EXTRA_IS_PLAYER, true);
                 startActivity(playIntent);
             }
@@ -45,9 +45,16 @@ public class MainActivity extends AppCompatActivity {
         binding.btnTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent testIntent = new Intent(getApplicationContext(), LevelListActivity.class);
+                Intent testIntent = new Intent(MainActivity.this, LevelListActivity.class);
                 testIntent.putExtra(EXTRA_IS_PLAYER, false);
                 startActivity(testIntent);
+            }
+        });
+
+        binding.btnResults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ResultsActivity.class));
             }
         });
 

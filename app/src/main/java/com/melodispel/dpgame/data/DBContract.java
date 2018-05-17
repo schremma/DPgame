@@ -20,6 +20,7 @@ public final class DBContract {
     public static final String COUNT = "count";
     public static final String DISTINCT = "distinct";
     public static final String TOP = "top";
+    public static final String AVERAGE = "average";
 
     public static final class MaterialsEntry implements BaseColumns {
 
@@ -76,6 +77,12 @@ public final class DBContract {
             return CONTENT_URI.buildUpon().
                     appendPath(TOP).
                     appendPath(String.valueOf(limit)).
+                    build();
+        }
+
+        public static Uri buildResponseAverageslUri() {
+            return CONTENT_URI.buildUpon().
+                    appendPath(AVERAGE).
                     build();
         }
 

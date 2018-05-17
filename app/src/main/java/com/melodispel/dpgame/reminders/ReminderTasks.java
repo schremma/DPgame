@@ -23,7 +23,7 @@ public class ReminderTasks {
     private static final int PLAY_REMINDER_PENDING_INTENT_ID = 12980;
     private static final int PLAY_NOTIFICATION_ID = 28390;
     private static final int ACTION_PLAY_NOW = 24524;
-    private static final int ACTION_ACTION_CANCEL_NOTIFICATION = 40898;
+    private static final int ACTION_CANCEL_NOTIFICATION = 40898;
 
     /**
      *
@@ -88,7 +88,7 @@ public class ReminderTasks {
         Intent intent = new Intent(context, PlayReminderIntentService.class);
         intent.setAction(PlayReminderIntentService.PLAY_NOW);
         PendingIntent pendingIntent = PendingIntent.getService(context,
-                ACTION_PLAY_NOW, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                ACTION_PLAY_NOW, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Action action = new Action(R.drawable.ic_notification_play,
                 "Play now", pendingIntent);
@@ -99,7 +99,7 @@ public class ReminderTasks {
         Intent intent = new Intent(context, PlayReminderIntentService.class);
         intent.setAction(PlayReminderIntentService.CANCEL_PLAY_REMINDER);
         PendingIntent pendingIntent = PendingIntent.getService(context,
-                ACTION_ACTION_CANCEL_NOTIFICATION, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                ACTION_CANCEL_NOTIFICATION, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Action action = new Action(R.drawable.ic_notification_cancel,
                 "Cancel reminders", pendingIntent);

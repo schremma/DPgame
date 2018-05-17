@@ -4,6 +4,11 @@
     <dimen name="play_choice_text_size">18sp</dimen>
     <dimen name="play_choice_padding">20dp</dimen>
 
+    <dimen name="play_land_choice_bottom_margin">48dp</dimen>
+    <dimen name="play_result_text_size">18sp</dimen>
+    <dimen name="play_result_margin">16dp</dimen>
+    <dimen name="test_result_margin">@dimen/play_result_margin</dimen>
+
     <dimen name="main_navigation_choice_width">120dp</dimen>
     <dimen name="main_navigation_choice_height">80dp</dimen>
     <dimen name="main_navigation_choice_text_size">24sp</dimen>

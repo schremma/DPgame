@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_sentence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/play_result_margin"
+            android:layout_marginStart="@dimen/play_result_margin"
+            android:layout_marginTop="8dp"
+            android:textSize="@dimen/play_result_text_size"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_last_results"
+            tools:text="1000 ms" />
+
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/play_result_margin"
+            android:layout_marginStart="@dimen/play_result_margin"
+            android:layout_marginTop="8dp"
+            android:textSize="@dimen/play_result_text_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_sentence"
+            tools:text="Correct" />
+
+        <TextView
+            android:id="@+id/tv_accuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/play_result_margin"
+            android:layout_marginRight="@dimen/play_result_margin"
+            android:layout_marginTop="8dp"
+            android:textSize="@dimen/play_result_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_rt"
+            tools:text="80%" />
+
+        <TextView
+            android:id="@+id/tv_rt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/play_result_margin"
+            android:layout_marginRight="@dimen/play_result_margin"
+            android:layout_marginTop="8dp"
+            android:textSize="@dimen/play_result_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_accumulated"
+            tools:text="1356 ms" />
+
+        <TextView
+            android:id="@+id/lbl_last_results"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/play_result_margin"
+            android:layout_marginStart="@dimen/play_result_margin"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_play_last_response"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lbl_accumulated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/play_result_margin"
+            android:layout_marginRight="@dimen/play_result_margin"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_accumulated_results"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lbl_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/play_result_margin"
+            android:layout_marginRight="@dimen/play_result_margin"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_speed"
+            android:textSize="@dimen/play_result_text_size"
+            app:layout_constraintEnd_toStartOf="@+id/tv_rt"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_accumulated" />
+
+        <TextView
+            android:id="@+id/lbl_accuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/play_result_margin"
+            android:layout_marginRight="@dimen/play_result_margin"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_accuracy"
+            android:textSize="@dimen/play_result_text_size"
+            app:layout_constraintEnd_toStartOf="@+id/tv_accuracy"
+            app:layout_constraintTop_toBottomOf="@+id/tv_rt" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

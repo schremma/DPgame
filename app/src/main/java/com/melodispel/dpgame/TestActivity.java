@@ -224,7 +224,7 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
         }
 
         if (!responseAccuracy.equals(GameEnums.ResponseAccuracy.NO_RESPONSE)) {
-            info += ", " + responseTimer.getResponseTime() + " ms";
+            info += ", " + responseTimer.getResponseTime() + " " + getString(R.string.response_time_unit);
         }
 
         binding.testerPanel.tvInfo.setText(info);
@@ -334,8 +334,8 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
         double accuracyPercent =  Math.round(resultSummary.getAccuracyPercent());
         int rt = resultSummary.getResponseTimeMillis();
 
-        binding.testerPanel.tvAccuracy.setText(String.valueOf(accuracyPercent) + "%");
-        binding.testerPanel.tvRt.setText(String.valueOf(rt) + " ms");
+        binding.testerPanel.tvAccuracy.setText(String.valueOf(accuracyPercent) + getString(R.string.accuracy_unit));
+        binding.testerPanel.tvRt.setText(String.valueOf(rt) + " " + getString(R.string.response_time_unit));
     }
 
     private void displayErrorMessage(String message) {

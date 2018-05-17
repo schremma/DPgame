@@ -13,6 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.melodispel.dpgame.GameEnums.GameState;
+import com.melodispel.dpgame.GameEnums.ResponseAccuracy;
+import com.melodispel.dpgame.GameEnums.SessionState;
 import com.melodispel.dpgame.data.DBContract;
 import com.melodispel.dpgame.databinding.ActivityPlayBinding;
 import com.melodispel.dpgame.gameplay.GameManager;
@@ -20,7 +23,6 @@ import com.melodispel.dpgame.gameplay.GamePlayDisplay;
 import com.melodispel.dpgame.gameplay.GamePlayManager;
 import com.melodispel.dpgame.gameplay.ResponseTimer;
 import com.melodispel.dpgame.gameplay.ResultSummary;
-import com.melodispel.dpgame.GameEnums.*;
 
 
 public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
@@ -139,6 +141,15 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
             }
         });
 
+        binding.sentenceDisplay.linearLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
+            public void onSwipeRight() {
+                Toast.makeText(PlayActivity.this, "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(PlayActivity.this, "left", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         binding.sentenceDisplay.btnLeft.setOnTouchListener(new PlayActivity.TargetItemTouchListener());
         binding.sentenceDisplay.btnRight.setOnTouchListener(new PlayActivity.TargetItemTouchListener());
         binding.sentenceDisplay.targetArea.setOnDragListener(new PlayActivity.TargetAreaDragListener());
@@ -191,7 +202,6 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
                 binding.sentenceDisplay.btnLeft.setText(wrongChoice);
             }
 
-            binding.testerPanel.tvSentence.setText(String.valueOf(materialsCursor.getInt(materialsCursor.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID))));
         } else {
             resetSentenceDisplay();
         }
@@ -221,23 +231,25 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
     private void showResultsOnTestPanel() {
 
-        String info = "";
+        String accuracyInfo = "";
 
         switch (responseAccuracy) {
-            case WRONG: info ="incorrect";
+            case WRONG: accuracyInfo ="incorrect";
                 break;
-            case CORRECT: info = "correct";
+            case CORRECT: accuracyInfo = "correct";
                 break;
-            case NO_RESPONSE: info = "no response yet";
+            case NO_RESPONSE: accuracyInfo = "no response yet";
                 break;
-            default: info = "?";
+            default: accuracyInfo = "?";
         }
+
+        binding.testerPanel.tvInfo.setText(accuracyInfo);
 
         if (!responseAccuracy.equals(ResponseAccuracy.NO_RESPONSE)) {
-            info += ", " + responseTimer.getResponseTime() + " ms";
+            String rtInfo = responseTimer.getResponseTime() + " " + getString(R.string.response_time_unit);
+            binding.testerPanel.tvSentence.setText(rtInfo);
         }
 
-        binding.testerPanel.tvInfo.setText(info);
     }
 
     public void setMaterial(Cursor materialsCursor) {
@@ -347,8 +359,8 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         double accuracyPercent =  Math.round(resultSummary.getAccuracyPercent());
         int rt = resultSummary.getResponseTimeMillis();
 
-        binding.testerPanel.tvAccuracy.setText(String.valueOf(accuracyPercent) + "%");
-        binding.testerPanel.tvRt.setText(String.valueOf(rt) + " ms");
+        binding.testerPanel.tvAccuracy.setText(String.valueOf(accuracyPercent) + getString(R.string.accuracy_unit));
+        binding.testerPanel.tvRt.setText(String.valueOf(rt) + " "  + getString(R.string.response_time_unit));
     }
 
     private void displayErrorMessage(String message) {

@@ -33,6 +33,8 @@ public class ReminderUtilities {
 
     public static void scheduleFirebaseJobDispatcherForReminder(@NonNull Context context, int interval, String intervalUnit) {
 
+
+        // Android enforces a 15 minute interval on recurring jobs
         int startTime = getExecutionWindowStart(interval, intervalUnit);
         int startTimeInterval = getExecutionWindowLength(interval, intervalUnit);
         int endTime = startTime + startTimeInterval;
