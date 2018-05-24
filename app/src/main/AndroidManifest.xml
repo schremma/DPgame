@@ -21,7 +21,6 @@
         <activity android:name=".PlayActivity" />
         <activity
             android:name=".LevelListActivity"
-            android:label="@string/title_activity_level_list"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

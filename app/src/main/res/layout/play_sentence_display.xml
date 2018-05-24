@@ -83,6 +83,19 @@
             android:background="@color/lightGrey" />
 
         <TextView
+            android:id="@+id/tv_Instructions"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="Tap here to start"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="center" />
+
+        <TextView
             android:id="@+id/tv_itemEnd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DP Spel</string>
+    <string name="title_activity_level_list">Tillgängliga nivåer</string>
+
+    <string name="title_settings">Inställningar</string>
+
+    <string name="notifications_instruction_for_new_notification">Varna mig om jag inte spelat i:</string>
+    <string name="notifications_instruction_for_set_notification">Jag ska få notification om jag inte spelat i:</string>
+    <string name="notification_set">OK</string>
+    <string name="notification_cancel">Cancel notification</string>
+
+    <string name="reminder_title">Dags för svenck grammatk!</string>
+    <string name="reminder_text_start">Du har inte spelat i</string>
+
+    <string name="response_time_unit">ms</string>
+    <string name="accuracy_unit">%</string>
+
+    <string name="minute_unit">minuter</string>
+    <string name="hour_unit">timmar</string>
+    <string name="day_unit">dagar</string>
+    <string name="week_unit">veckor</string>
+
+    <plurals name="minute">
+        <item quantity="one">en minut</item>
+        <item quantity="other">%d minuter</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="one">en timme</item>
+        <item quantity="other">%d timmar</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="one">en dag</item>
+        <item quantity="other">%d dagar</item>
+    </plurals>
+    <plurals name="week">
+        <item quantity="one">en vecka</item>
+        <item quantity="other">%d veckor</item>
+    </plurals>
+
+    <string name="label_play_last_response">Senaste svaret</string>
+    <string name="label_accumulated_results">Resultat än så länge</string>
+    <string name="label_speed">Hastighet:</string>
+    <string name="label_accuracy">Rätta svar:</string>
+    <string name="label_main_play">Spela</string>
+    <string name="label_main_test">Testa</string>
+    <string name="label_main_results">Resultat</string>
+
+    <string name="title_notifications">Notificationer</string>
+    <string name="label_switch_language">Ändra till</string>
+    <string name="language_english">engelska</string>
+    <string name="language_swedish">svenska</string>
+</resources>

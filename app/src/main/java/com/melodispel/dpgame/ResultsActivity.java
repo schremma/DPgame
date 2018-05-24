@@ -11,6 +11,11 @@ import com.melodispel.dpgame.data.DBContract;
 
 public class ResultsActivity extends AppCompatActivity {
 
+    private static final int COLUMN_ALL_RTs = 0;
+    private static final int COLUMN_CORRECT_RTs = 0;
+    private static final int COLUMN_LEVEL = 2;
+    private static final int COLUMN_ACCURACY = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,44 +30,59 @@ public class ResultsActivity extends AppCompatActivity {
 
     private String getContent() {
 
-        Cursor cursor = getContentResolver().query(DBContract.ResponsesEntry.buildResponseAverageslUri(),
+        Cursor cursorResponses = getContentResolver().query(DBContract.ResponsesEntry.buildResponseAverageslUri(),
+                null,
+                null,
+                null,
+                null);
+
+        Cursor cursorCorrectRTs = getContentResolver().query(DBContract.ResponsesEntry.buildAverageCorrectOrIncorrectRTlUri(true),
                 null,
                 null,
                 null,
                 null);
 
         StringBuilder stringRT = new StringBuilder();
-        stringRT.append("[['Level', 'RT'],");
+        stringRT.append("[");
 
-        while (cursor.moveToNext()) {
+        while (cursorResponses.moveToNext() && cursorCorrectRTs.moveToNext()) {
             stringRT.append("[");
-            stringRT.append(cursor.getInt(2));
+            stringRT.append("'");
+            stringRT.append(cursorResponses.getInt(COLUMN_LEVEL));
+            stringRT.append("'");
             stringRT.append(", ");
-            stringRT.append(cursor.getInt(0));
+            stringRT.append(cursorResponses.getInt(COLUMN_ALL_RTs));
+            stringRT.append(", ");
+            stringRT.append(cursorCorrectRTs.getInt(COLUMN_CORRECT_RTs));
             stringRT.append("]");
-            if (!cursor.isLast()) {
+            if (!cursorResponses.isLast()) {
                 stringRT.append(",");
             }
         }
         stringRT.append("]");
 
         StringBuilder stringAcc = new StringBuilder();
-        stringAcc.append("[['Level', 'Accuracy'],");
-
-        while (cursor.moveToNext()) {
+        stringAcc.append("[");
+        cursorResponses.moveToPosition(-1);
+        while (cursorResponses.moveToNext()) {
             stringAcc.append("[");
-            stringAcc.append(cursor.getInt(2));
+            stringAcc.append("'");
+            stringAcc.append(cursorResponses.getInt(COLUMN_LEVEL));
+            stringAcc.append("'");
             stringAcc.append(", ");
-            double accuracy = Math.round((cursor.getDouble(1) * 100));
+            int accuracy = (int)Math.round((cursorResponses.getDouble(COLUMN_ACCURACY) * 100));
             stringAcc.append(accuracy);
             stringAcc.append("]");
-            if (!cursor.isLast()) {
+            if (!cursorResponses.isLast()) {
                 stringAcc.append(",");
             }
         }
         stringAcc.append("]");
 
-        Log.i("ResultsActivity", stringRT.toString());
+        cursorCorrectRTs.close();
+        cursorResponses.close();
+
+        Log.i("ResultsActivity", stringAcc.toString());
 
         String content = "<html>"
                 + "  <head>"
@@ -71,18 +91,34 @@ public class ResultsActivity extends AppCompatActivity {
                 + "      google.load(\"visualization\", \"1\", {packages:[\"corechart\"]});"
                 + "      google.setOnLoadCallback(drawChart);"
                 + "      function drawChart() {"
-                + "        var data = google.visualization.arrayToDataTable(" + stringRT.toString() + ");"
+                + "        var data = new google.visualization.DataTable();"
+                +"          data.addColumn('string', 'Level'); "
+                +"          data.addColumn('number', 'Response speed'); "
+                +"          data.addColumn('number', 'Only correct responses'); "
+                +"                    data.addRows("+ stringRT.toString()+");"
                 + "        var options = {"
-                + "          title: 'Resposne time results',"
-                + "          hAxis: {title: 'Level', titleTextStyle: {color: 'red'}}"
+                + "          title: 'Response speed results',"
+                + "          hAxis: {title: 'Level'}"
                 + "        };"
                 + "        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));"
                 + "        chart.draw(data, options);"
+                + "        data = new google.visualization.DataTable();"
+                +"          data.addColumn('string', 'Level'); "
+                +"          data.addColumn('number', 'Accuracy'); "
+                +"                    data.addRows("+ stringAcc.toString()+");"
+                + "        options = {"
+                + "          title: 'Accuracy results',"
+                + "          hAxis: {title: 'Level'},"
+                +"           vAxis: {minValue: 0}"
+                + "        };"
+                + "        var chartAcc = new google.visualization.ColumnChart(document.getElementById('chart_accuracy_div'));"
+                + "        chartAcc.draw(data, options);"
                 + "      }"
                 + "    </script>"
                 + "  </head>"
                 + "  <body>"
-                + "    <div id=\"chart_div\" style=\"width: 1000px; height: 500px;\"></div>"
+                + "    <div id=\"chart_div\"></div>"
+                + "    <div id=\"chart_accuracy_div\"></div>"
                 + "  </body>" + "</html>";
 
         return content;

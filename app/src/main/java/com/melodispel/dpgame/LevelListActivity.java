@@ -1,7 +1,6 @@
 package com.melodispel.dpgame;
 
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -12,14 +11,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.melodispel.dpgame.data.DBContract;
-
-import java.util.zip.Inflater;
 
 public class LevelListActivity extends AppCompatActivity implements LevelAdapter.LevelAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -39,6 +35,7 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level_list);
+        setTitle(R.string.title_activity_level_list);
 
         Intent intent = getIntent();
         isPlayer = intent.getBooleanExtra(MainActivity.EXTRA_IS_PLAYER, IS_PLAYER_DEFAULT);

@@ -2,9 +2,12 @@ package com.melodispel.dpgame;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,17 +22,21 @@ import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityMainBinding;
 import com.melodispel.dpgame.reminders.ReminderUtilities;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
 
     public static final String EXTRA_IS_PLAYER = "com.melodispel.dpgame.ISPLAYER";
-    public static final String EXTRA_SETTINGS_ID = "com.melodispel.dpgame.SETTINGS_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle(R.string.app_name);
+
+        applyPreferredAppLanguage();
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
@@ -66,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main, menu);
 
+        String currentLanguage = getResources().getConfiguration().locale.getLanguage();
+        String switchLanguage = getString(R.string.language_english);
+        if (currentLanguage.equals("en"))
+            switchLanguage = getString(R.string.language_swedish);
+        MenuItem languagedMenuItem = menu.findItem(R.id.setings_language);
+        languagedMenuItem.setTitle(languagedMenuItem.getTitle() + " " + switchLanguage);
+
         return true;
     }
 
@@ -74,8 +88,41 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.settings_main) {
             showNotificationPickerDialog();
+        } else if (item.getItemId() == R.id.setings_language) {
+            String currentLanguage = DPGamePreferences.getCurrentAppLanguage(this);
+            if (currentLanguage.equals("en")) {
+                switchAppLanguage("sv");
+            } else if (currentLanguage.equals("sv")) {
+                switchAppLanguage("en");
+            }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void switchAppLanguage(String lang) {
+
+        DPGamePreferences.setPreferredLanguage(this, lang);
+        if (applyPreferredAppLanguage()) {
+            restartActivity();
+        }
+    }
+
+    private boolean applyPreferredAppLanguage() {
+        String lang = DPGamePreferences.getPreferredLanguage(this);
+        if (lang != null) {
+            if (!lang.equals(DPGamePreferences.getCurrentAppLanguage(this))) {
+
+                Locale locale = new Locale(lang);
+                Resources res = getResources();
+                DisplayMetrics dm = res.getDisplayMetrics();
+                Configuration conf = res.getConfiguration();
+                conf.locale = locale;
+                res.updateConfiguration(conf, dm);
+
+                return true;
+            }
+        }
+        return false;
     }
 
     private void showNotificationPickerDialog() {
@@ -154,5 +201,11 @@ public class MainActivity extends AppCompatActivity {
     private void onNotificationCanceled() {
         DPGamePreferences.setNotificationIntervalTime(this, R.integer.pref_notification_interval_not_set);
         ReminderUtilities.cancelFirebaseJobDispatcherForReminder(MainActivity.this);
+    }
+
+    private void restartActivity() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }

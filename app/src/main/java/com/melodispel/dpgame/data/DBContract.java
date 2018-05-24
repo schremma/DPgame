@@ -86,6 +86,14 @@ public final class DBContract {
                     build();
         }
 
+        public static Uri buildAverageCorrectOrIncorrectRTlUri(boolean correctResponses) {
+            int accuracy = correctResponses ? 1 : 0;
+            return CONTENT_URI.buildUpon().
+                    appendPath(AVERAGE).
+                    appendPath(String.valueOf(accuracy)).
+                    build();
+        }
+
     }
 
     public  static final class SessionDataEntry implements BaseColumns {

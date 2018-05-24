@@ -97,4 +97,21 @@ public class DPGamePreferences {
             return context.getResources().getInteger(R.integer.pref_default_nbr_of_responses_for_result_calculation);
         }
     }
+
+    public static String getCurrentAppLanguage(Context context) {
+        return  context.getResources().getConfiguration().locale.getLanguage();
+    }
+
+    public static void setPreferredLanguage(Context context, String lang) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(context.getResources().getString(R.string.pref_key_language), lang);
+        editor.apply();
+    }
+
+    public static String getPreferredLanguage(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(context.getResources().getString(R.string.pref_key_language),
+                context.getResources().getString(R.string.pref_default_language));
+    }
 }

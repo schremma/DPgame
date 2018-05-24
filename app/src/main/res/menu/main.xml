@@ -4,8 +4,14 @@
 
     <item
         android:id="@+id/settings_main"
-        android:title="Notifications"
-        android:orderInCategory="1"
+        android:title="@string/title_notifications"
+        android:orderInCategory="2"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/setings_language"
+        android:title="@string/label_switch_language"
+        android:orderInCategory="1"
+        app:showAsAction="never"
+        />
 
 </menu>
