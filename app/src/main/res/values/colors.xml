@@ -6,4 +6,5 @@
     <color name="darkGrey">#122A34</color>
     <color name="lightGrey">#d1e0e0</color>
     <color name="colorTargetArea">#d1e0e0</color>
+    <color name="colorTargetAreaCorrect">#4dff88</color>
 </resources>

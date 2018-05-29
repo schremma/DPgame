@@ -54,6 +54,17 @@
     <string name="label_main_play">Play</string>
     <string name="label_main_test">Test</string>
     <string name="label_main_results">Results</string>
+    <string name="instruction_play_target_area">Touch to start</string>
+    <string name="instruction_play_default"></string>
+    <string name="instruction_play_continue">[Tap to continue]</string>
+    <string name="message_play_level_progression">Progressed to level</string>
+    <string name="result_play_correct_response">correct</string>
+    <string name="result_play_incorrect_response">incorrect</string>
+    <string name="result_play_no_response">No response yet</string>
+    <string name="reminder_action_play">Play now</string>
+    <string name="reminder_action_cancel">Cancel reminders</string>
+
+
 
     <string name="title_notifications">Notifications</string>
     <string name="label_switch_language">Switch to</string>

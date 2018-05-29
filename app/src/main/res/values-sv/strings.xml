@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DP Spel</string>
-    <string name="title_activity_level_list">Tillgängliga nivåer</string>
+    <string name="title_activity_level_list">Mina nivåer</string>
 
     <string name="title_settings">Inställningar</string>
 
-    <string name="notifications_instruction_for_new_notification">Varna mig om jag inte spelat i:</string>
+    <string name="notifications_instruction_for_new_notification">Notifiera mig om jag inte spelat i:</string>
     <string name="notifications_instruction_for_set_notification">Jag ska få notification om jag inte spelat i:</string>
     <string name="notification_set">OK</string>
-    <string name="notification_cancel">Cancel notification</string>
+    <string name="notification_cancel">Cancel påminnelse</string>
 
-    <string name="reminder_title">Dags för svenck grammatk!</string>
+    <string name="reminder_title">Dags för svensk grammatk!</string>
     <string name="reminder_text_start">Du har inte spelat i</string>
 
     <string name="response_time_unit">ms</string>
@@ -38,15 +38,23 @@
         <item quantity="other">%d veckor</item>
     </plurals>
 
-    <string name="label_play_last_response">Senaste svaret</string>
-    <string name="label_accumulated_results">Resultat än så länge</string>
+    <string name="label_play_last_response">Senaste:</string>
+    <string name="label_accumulated_results">Resultat</string>
     <string name="label_speed">Hastighet:</string>
     <string name="label_accuracy">Rätta svar:</string>
     <string name="label_main_play">Spela</string>
     <string name="label_main_test">Testa</string>
     <string name="label_main_results">Resultat</string>
+    <string name="instruction_play_target_area">Starta spelet</string>
+    <string name="instruction_play_continue">[Clicka för nästa]</string>
+    <string name="result_play_correct_response">rätt</string>
+    <string name="result_play_incorrect_response">fel</string>
+    <string name="result_play_no_response">Inga svar</string>
+    <string name="reminder_action_play">Spela!</string>
+    <string name="reminder_action_cancel">Inga påminnelser</string>
+    <string name="message_play_level_progression">Ny nivå</string>
 
-    <string name="title_notifications">Notificationer</string>
+    <string name="title_notifications">Påminnelser</string>
     <string name="label_switch_language">Ändra till</string>
     <string name="language_english">engelska</string>
     <string name="language_swedish">svenska</string>

@@ -139,12 +139,23 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
         binding.sentenceDisplay.btnRight.setOnTouchListener(new TargetItemTouchListener());
         binding.sentenceDisplay.targetArea.setOnDragListener(new TargetAreaDragListener());
 
+        binding.sentenceDisplay.playSentenceArea.setOnTouchListener(new OnSwipeTouchListener(this) {
+            public void onSwipeLeft() {
+                if (gameState.equals(GameEnums.GameState.RESPONDED) || gameState.equals(GameEnums.GameState.PROGRESSED_LEVEL)) {
+                    continueWithNextItem();
+                }
+            }
+        });
+
         toogleResponseControls(false);
     }
 
 
     private void startGame() {
         toogleResponseControls(true);
+        if (!hasNextSentenceItem()) {
+            moveToFirstItem();
+        }
         showCurrentSentence();
         responseTimer.startResponseTImeMeasurement();
         gameState = GameEnums.GameState.WAITING_RESPONSE;
@@ -204,6 +215,16 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
 
     }
 
+    private boolean hasNextSentenceItem() {
+        return !materialsCursor.isAfterLast();
+    }
+
+    public void moveToFirstItem() {
+        if (materialsCursor == null || materialsCursor.getCount() == 0 || !materialsCursor.moveToFirst()) {
+            throw new IllegalArgumentException("No material found on moving to next sentence");
+        }
+    }
+
     @Override
     public GameEnums.GameState getGameState() {
         return gameState;
@@ -214,11 +235,11 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
         String info = "";
 
         switch (responseAccuracy) {
-            case WRONG: info ="incorrect";
+            case WRONG: info = getString(R.string.result_play_incorrect_response);
                 break;
-            case CORRECT: info = "correct";
+            case CORRECT: info = getString(R.string.result_play_correct_response);
                 break;
-            case NO_RESPONSE: info = "no response yet";
+            case NO_RESPONSE: info = getString(R.string.result_play_no_response);
                 break;
             default: info = "?";
         }

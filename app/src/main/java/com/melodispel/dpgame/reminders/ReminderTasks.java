@@ -91,7 +91,7 @@ public class ReminderTasks {
                 ACTION_PLAY_NOW, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Action action = new Action(R.drawable.ic_notification_play,
-                "Play now", pendingIntent);
+                context.getString(R.string.reminder_action_play), pendingIntent);
         return action;
     }
 
@@ -102,7 +102,7 @@ public class ReminderTasks {
                 ACTION_CANCEL_NOTIFICATION, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Action action = new Action(R.drawable.ic_notification_cancel,
-                "Cancel reminders", pendingIntent);
+                context.getString(R.string.reminder_action_cancel), pendingIntent);
         return action;
     }
 

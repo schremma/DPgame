@@ -5,7 +5,8 @@
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/play_sentence_area">
+    android:id="@+id/play_sentence_area"
+    android:clickable="true">
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -55,8 +56,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        android:clickable="true">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tv_itemStart"
@@ -69,7 +69,7 @@
             android:textSize="@dimen/play_sentence_text_size"
             tools:text="item start" />
 
-        <ImageView
+        <TextView
             android:id="@+id/target_area"
             android:layout_width="100dp"
             android:layout_height="50dp"
@@ -80,20 +80,11 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="center"
-            android:background="@color/lightGrey" />
+            android:background="@color/lightGrey"
+            android:text="@string/instruction_play_default"
+            android:gravity="center"
+            />
 
-        <TextView
-            android:id="@+id/tv_Instructions"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:text="Tap here to start"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/tv_itemEnd"

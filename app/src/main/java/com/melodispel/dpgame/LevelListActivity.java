@@ -45,7 +45,6 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
         rwLevels.setAdapter(levelAdapter);
         rwLevels.setLayoutManager(new LinearLayoutManager(this));
 
-        //levelAdapter.setData(levelCursor);
 
         getLoaderManager().initLoader(ID_LEVEL_LOADER, null, this);
 

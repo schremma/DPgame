@@ -8,7 +8,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 
 import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityMainBinding;
+import com.melodispel.dpgame.reminders.ReminderTasks;
 import com.melodispel.dpgame.reminders.ReminderUtilities;
 
 import java.util.Locale;
@@ -190,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
         DPGamePreferences.setNotificationIntervalUnit(this, interval);
 
         if (time > 0) {
-            Log.i("MainActivity", "Setting new notification: " + interval);
             ReminderUtilities.scheduleFirebaseJobDispatcherForReminder(this, time, interval);
+            ReminderTasks.remindOfPlaying(this, System.currentTimeMillis());
         } else {
             ReminderUtilities.cancelFirebaseJobDispatcherForReminder(this);
         }
