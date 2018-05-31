@@ -113,6 +113,9 @@ public class GameManager implements GamePlayManager {
                 }
 
             }
+            if (lastEntryOnLevel !=null) {
+                lastEntryOnLevel.close();
+            }
         }
         return materialsCursor;
     }
@@ -218,14 +221,18 @@ public class GameManager implements GamePlayManager {
         Cursor countCursor = context.getContentResolver().query(DBContract.ResponsesEntry.buildCountResponsesAtLevelUri(level),
                 null,null,null,null);
         countCursor.moveToFirst();
-        return countCursor.getInt(0);
+        int responseCount = countCursor.getInt(0);
+        countCursor.close();
+        return responseCount;
     }
 
     private long getSentenceCountForLevel(int level) {
         Cursor countCursor = context.getContentResolver().query(DBContract.MaterialsEntry.buildCountSentencesAtLevelUri(level),
                 null,null,null,null);
         countCursor.moveToFirst();
-        return countCursor.getInt(0);
+        int sentenceCount = countCursor.getInt(0);
+        countCursor.close();
+        return sentenceCount;
     }
 
     private Cursor getLastPlayedItemIdOnLevel(int level) {

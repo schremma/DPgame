@@ -15,7 +15,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dpgame.db";
 
     // If you change the database schema, you must increment the database version
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
 
     private Context context;
 

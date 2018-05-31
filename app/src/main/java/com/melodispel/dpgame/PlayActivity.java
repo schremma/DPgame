@@ -7,7 +7,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.melodispel.dpgame.GameEnums.GameState;
 import com.melodispel.dpgame.GameEnums.ResponseAccuracy;
 import com.melodispel.dpgame.GameEnums.SessionState;
 import com.melodispel.dpgame.data.DBContract;
+import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityPlayBinding;
 import com.melodispel.dpgame.gameplay.GameManager;
 import com.melodispel.dpgame.gameplay.GamePlayDisplay;
@@ -56,6 +56,8 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        DPGamePreferences.applyPreferredAppLanguage(this);
+
         Intent intent = getIntent();
 
         int currentLevel = savedInstanceState != null ?
@@ -84,8 +86,6 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
         if (responseTimer == null)
             responseTimer = new ResponseTimer();
-
-        Log.i(getClass().getSimpleName(), "Session state: " + sessionState.toString());
 
         initGameArea();
 
@@ -278,12 +278,22 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     }
 
     public void setMaterial(Cursor materialsCursor) {
+        Cursor old = this.materialsCursor;
         this.materialsCursor = materialsCursor;
+
+        if (old !=null) {
+            old.close();
+        }
     }
 
     @Override
     public void progressToNextLevel(Cursor cursor, int level) {
+        Cursor old = this.materialsCursor;
         materialsCursor = cursor;
+
+        if (old !=null) {
+            old.close();
+        }
         gameState = GameState.PROGRESSED_LEVEL;
 
         Toast.makeText(this, "Progressed to level "
@@ -430,6 +440,13 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         outState.putParcelable(KEY_RESPONSE_TIMER, responseTimer);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (materialsCursor !=null) {
+            materialsCursor.close();
+        }
+    }
 }
 
 

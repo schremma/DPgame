@@ -2,12 +2,9 @@ package com.melodispel.dpgame;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,8 +19,6 @@ import com.melodispel.dpgame.databinding.ActivityMainBinding;
 import com.melodispel.dpgame.reminders.ReminderTasks;
 import com.melodispel.dpgame.reminders.ReminderUtilities;
 
-import java.util.Locale;
-
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
@@ -36,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
-        applyPreferredAppLanguage();
+        DPGamePreferences.applyPreferredAppLanguage(this);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
@@ -102,28 +97,11 @@ public class MainActivity extends AppCompatActivity {
     private void switchAppLanguage(String lang) {
 
         DPGamePreferences.setPreferredLanguage(this, lang);
-        if (applyPreferredAppLanguage()) {
-            restartActivity();
-        }
+        DPGamePreferences.applyPreferredAppLanguage(this);
+        restartActivity();
+
     }
 
-    private boolean applyPreferredAppLanguage() {
-        String lang = DPGamePreferences.getPreferredLanguage(this);
-        if (lang != null) {
-            if (!lang.equals(DPGamePreferences.getCurrentAppLanguage(this))) {
-
-                Locale locale = new Locale(lang);
-                Resources res = getResources();
-                DisplayMetrics dm = res.getDisplayMetrics();
-                Configuration conf = res.getConfiguration();
-                conf.locale = locale;
-                res.updateConfiguration(conf, dm);
-
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void showNotificationPickerDialog() {
         final Dialog dialog = new Dialog(this);

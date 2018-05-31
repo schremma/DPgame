@@ -2,10 +2,15 @@ package com.melodispel.dpgame.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.melodispel.dpgame.R;
+
+import java.util.Locale;
 
 public class DPGamePreferences {
 
@@ -113,5 +118,21 @@ public class DPGamePreferences {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getString(context.getResources().getString(R.string.pref_key_language),
                 context.getResources().getString(R.string.pref_default_language));
+    }
+
+    public static void applyPreferredAppLanguage(Context context) {
+        String lang = DPGamePreferences.getPreferredLanguage(context);
+        if (lang != null) {
+            if (!lang.equals(DPGamePreferences.getCurrentAppLanguage(context))) {
+
+                Locale locale = new Locale(lang);
+                Resources res = context.getResources();
+                DisplayMetrics dm = res.getDisplayMetrics();
+                Configuration conf = res.getConfiguration();
+                conf.locale = locale;
+                res.updateConfiguration(conf, dm);
+
+            }
+        }
     }
 }

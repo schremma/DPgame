@@ -31,10 +31,13 @@ public final class DPGameTimeUtils {
             long lastPlayedInMillis = cursor.getLong(cursor.getColumnIndex(DBContract.ResponsesEntry.COLUMN_TIME_STAMP));
             long intervalMillis = System.currentTimeMillis()-lastPlayedInMillis;
 
-
+            cursor.close();
             return intervalMillis;
 
         } else {
+            if (cursor != null) {
+                cursor.close();
+            }
             return -1;
         }
     }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.melodispel.dpgame.data.DBContract;
+import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityTestBinding;
 import com.melodispel.dpgame.gameplay.GamePlayDisplay;
 import com.melodispel.dpgame.gameplay.GamePlayManager;
@@ -52,6 +53,8 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DPGamePreferences.applyPreferredAppLanguage(this);
 
         Intent intent = getIntent();
 
@@ -196,7 +199,8 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
                 binding.sentenceDisplay.btnLeft.setText(wrongChoice);
             }
 
-            binding.testerPanel.tvSentence.setText(String.valueOf(materialsCursor.getInt(materialsCursor.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID))));
+            String currentSentenceId = String.valueOf(materialsCursor.getInt(materialsCursor.getColumnIndex(DBContract.MaterialsEntry.COLUMN_SENTENCE_ID)));
+            binding.testerPanel.tvSentence.setText(getString(R.string.label_test_info_id) + " " + currentSentenceId);
         } else {
             resetSentenceDisplay();
         }
@@ -252,7 +256,12 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
     }
 
     public void setMaterial(Cursor materialsCursor) {
+        Cursor old = this.materialsCursor;
         this.materialsCursor = materialsCursor;
+
+        if (old !=null) {
+            old.close();
+        }
     }
 
     @Override
@@ -291,7 +300,6 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
 
         @Override
         public boolean onDrag(View v, DragEvent event) {
-            //int action = event.getAction();
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
 
@@ -384,4 +392,11 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
         outState.putParcelable(KEY_RESPONSE_TIMER, responseTimer);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (materialsCursor !=null) {
+            materialsCursor.close();
+        }
+    }
 }

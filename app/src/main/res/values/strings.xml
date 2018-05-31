@@ -54,6 +54,7 @@
     <string name="label_main_play">Play</string>
     <string name="label_main_test">Test</string>
     <string name="label_main_results">Results</string>
+    <string name="label_test_info_id">Id</string>
     <string name="instruction_play_target_area">Touch to start</string>
     <string name="instruction_play_default"></string>
     <string name="instruction_play_continue">[Tap to continue]</string>
