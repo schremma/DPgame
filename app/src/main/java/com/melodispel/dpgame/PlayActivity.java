@@ -115,8 +115,9 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
             if (!gameState.equals(GameState.NOT_STARTED)) {
 
-                if (gameState.equals(gameState.RESPONDED)) {
+                if (gameState.equals(GameState.RESPONDED)) {
                     toogleResponseControls(false);
+
                 } else {
                     toogleResponseControls(true);
                 }
@@ -167,9 +168,9 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
     private void startGame() {
         toogleResponseControls(true);
-        if (!hasNextSentenceItem()) {
+/*        if (!hasNextSentenceItem()) {
             moveToFirstItem();
-        }
+        }*/
         gameState = GameState.WAITING_RESPONSE;
         showCurrentSentence();
         responseTimer.startResponseTImeMeasurement();

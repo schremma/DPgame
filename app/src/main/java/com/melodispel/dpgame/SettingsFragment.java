@@ -83,7 +83,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             try {
                 int number = Integer.parseInt(newValue.toString());
 
-                if (number < PROGRESSION_LIMIT_MIN && number > PROGRESSION_LIMIT_MAX) {
+                if (number < PROGRESSION_LIMIT_MIN || number > PROGRESSION_LIMIT_MAX) {
                     validInput = false;
                     message = "Number is out of limits: " + PROGRESSION_LIMIT_MIN + " - " + PROGRESSION_LIMIT_MAX;
                 }
@@ -111,7 +111,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             try {
                 int number = Integer.parseInt(newValue.toString());
 
-                if (number < PROGRESSION_PERCENTAGE_MIN && number > PROGRESSION_PERCENTAGE_MAX) {
+                if (number < PROGRESSION_PERCENTAGE_MIN || number > PROGRESSION_PERCENTAGE_MAX) {
                     validInput = false;
                     message = "Number is out of limits: " + PROGRESSION_PERCENTAGE_MIN + " - " + PROGRESSION_PERCENTAGE_MAX;
                 }

@@ -106,7 +106,9 @@ public class GameManager implements GamePlayManager {
                 else {
                     GameEnums.GameState gameState = gamePlayDisplay.getGameState();
                     if (!gameState.equals(gameState.RESPONDED)) {
-                        materialsCursor.moveToNext();
+                        if (!materialsCursor.moveToNext()) {
+                            materialsCursor.moveToFirst();
+                        }
                     }
                 }
 
