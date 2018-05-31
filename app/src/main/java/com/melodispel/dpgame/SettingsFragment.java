@@ -12,6 +12,11 @@ import android.support.v7.preference.PreferenceScreen;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final int PROGRESSION_LIMIT_MIN = 1;
+    private static final int PROGRESSION_LIMIT_MAX = 100000;
+    private static final int PROGRESSION_PERCENTAGE_MIN = 1;
+    private static final int PROGRESSION_PERCENTAGE_MAX = 100;
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
@@ -35,7 +40,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
 
         nbrOfResponsesTextPref.setOnPreferenceChangeListener(new NumberSettingChangeListener());
-        progressionLimitTextPref.setOnPreferenceChangeListener(new NumberSettingChangeListener());
+        progressionLimitTextPref.setOnPreferenceChangeListener(new PercentSettingChangeListener());
     }
 
     @Override
@@ -74,15 +79,50 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             Boolean validInput = true;
+            String message = "";
             try {
                 int number = Integer.parseInt(newValue.toString());
+
+                if (number < PROGRESSION_LIMIT_MIN && number > PROGRESSION_LIMIT_MAX) {
+                    validInput = false;
+                    message = "Number is out of limits: " + PROGRESSION_LIMIT_MIN + " - " + PROGRESSION_LIMIT_MAX;
+                }
             } catch (NumberFormatException ex) {
                 validInput = false;
+                message = "Please enter an integer number";
             }
             if (!validInput) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Invalid Input");
-                builder.setMessage("Please enter an integer number");
+                builder.setMessage(message);
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.show();
+                validInput = false;
+            }
+            return validInput;
+        }
+    }
+
+    private class PercentSettingChangeListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            Boolean validInput = true;
+            String message = "";
+            try {
+                int number = Integer.parseInt(newValue.toString());
+
+                if (number < PROGRESSION_PERCENTAGE_MIN && number > PROGRESSION_PERCENTAGE_MAX) {
+                    validInput = false;
+                    message = "Number is out of limits: " + PROGRESSION_PERCENTAGE_MIN + " - " + PROGRESSION_PERCENTAGE_MAX;
+                }
+            } catch (NumberFormatException ex) {
+                validInput = false;
+                message = "Please enter an integer number";
+            }
+            if (!validInput) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Invalid Input");
+                builder.setMessage(message);
                 builder.setPositiveButton(android.R.string.ok, null);
                 builder.show();
                 validInput = false;

@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
         String notificationInfo = "";
         int setInterval = DPGamePreferences.getNotificationInterval(this);
-        if (setInterval != R.integer.pref_notification_interval_not_set) {
+        if (setInterval != getResources().getInteger(R.integer.pref_notification_interval_not_set)) {
             String unit = DPGamePreferences.getNotificationIntervalUnit(this);
             notificationInfo = getString(R.string.notifications_instruction_for_set_notification) + " "
             + ReminderUtilities.getLocalizedStringForIntervalUnit(this, unit, setInterval);
