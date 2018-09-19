@@ -1,30 +1,25 @@
 package com.melodispel.dpgame;
 
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.melodispel.dpgame.data.DBContract;
-
-import java.util.zip.Inflater;
+import com.melodispel.dpgame.data.DPGamePreferences;
 
 public class LevelListActivity extends AppCompatActivity implements LevelAdapter.LevelAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private SQLiteDatabase db;
     private RecyclerView rwLevels;
     private LevelAdapter levelAdapter;
     private boolean isPlayer;
@@ -38,7 +33,11 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DPGamePreferences.applyPreferredAppLanguage(this);
+
         setContentView(R.layout.activity_level_list);
+        setTitle(R.string.title_activity_level_list);
 
         Intent intent = getIntent();
         isPlayer = intent.getBooleanExtra(MainActivity.EXTRA_IS_PLAYER, IS_PLAYER_DEFAULT);
@@ -48,7 +47,6 @@ public class LevelListActivity extends AppCompatActivity implements LevelAdapter
         rwLevels.setAdapter(levelAdapter);
         rwLevels.setLayoutManager(new LinearLayoutManager(this));
 
-        //levelAdapter.setData(levelCursor);
 
         getLoaderManager().initLoader(ID_LEVEL_LOADER, null, this);
 

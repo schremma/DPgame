@@ -25,7 +25,7 @@ public class ReminderUtilities {
     public static final String HOUR = "hours";
     public static final String DAY = "days";
     public static final String WEEK = "weeks";
-    public static final String[] intervalUnitList = new String[]{MINUTE, HOUR, DAY, WEEK};
+    public static final String[] intervalUnitList = new String[]{HOUR, DAY, WEEK};
 
     // Schedule a new job that periodically checks whether it's time to remind the user
     // the interval for checking should be modulated by the notification interval set by the user

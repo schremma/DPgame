@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 
 import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityMainBinding;
+import com.melodispel.dpgame.reminders.ReminderTasks;
 import com.melodispel.dpgame.reminders.ReminderUtilities;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,12 +24,14 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
 
     public static final String EXTRA_IS_PLAYER = "com.melodispel.dpgame.ISPLAYER";
-    public static final String EXTRA_SETTINGS_ID = "com.melodispel.dpgame.SETTINGS_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle(R.string.app_name);
+
+        DPGamePreferences.applyPreferredAppLanguage(this);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
@@ -66,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main, menu);
 
+        String currentLanguage = getResources().getConfiguration().locale.getLanguage();
+        String switchLanguage = getString(R.string.language_english);
+        if (currentLanguage.equals("en"))
+            switchLanguage = getString(R.string.language_swedish);
+        MenuItem languagedMenuItem = menu.findItem(R.id.setings_language);
+        languagedMenuItem.setTitle(languagedMenuItem.getTitle() + " " + switchLanguage);
+
         return true;
     }
 
@@ -74,9 +83,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.settings_main) {
             showNotificationPickerDialog();
+        } else if (item.getItemId() == R.id.setings_language) {
+            String currentLanguage = DPGamePreferences.getCurrentAppLanguage(this);
+            if (currentLanguage.equals("en")) {
+                switchAppLanguage("sv");
+            } else if (currentLanguage.equals("sv")) {
+                switchAppLanguage("en");
+            }
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void switchAppLanguage(String lang) {
+
+        DPGamePreferences.setPreferredLanguage(this, lang);
+        DPGamePreferences.applyPreferredAppLanguage(this);
+        restartActivity();
+
+    }
+
 
     private void showNotificationPickerDialog() {
         final Dialog dialog = new Dialog(this);
@@ -91,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
         String notificationInfo = "";
         int setInterval = DPGamePreferences.getNotificationInterval(this);
-        if (setInterval != R.integer.pref_notification_interval_not_set) {
+        if (setInterval != getResources().getInteger(R.integer.pref_notification_interval_not_set)) {
             String unit = DPGamePreferences.getNotificationIntervalUnit(this);
             notificationInfo = getString(R.string.notifications_instruction_for_set_notification) + " "
             + ReminderUtilities.getLocalizedStringForIntervalUnit(this, unit, setInterval);
@@ -143,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
         DPGamePreferences.setNotificationIntervalUnit(this, interval);
 
         if (time > 0) {
-            Log.i("MainActivity", "Setting new notification: " + interval);
             ReminderUtilities.scheduleFirebaseJobDispatcherForReminder(this, time, interval);
+            ReminderTasks.remindOfPlaying(this, System.currentTimeMillis());
         } else {
             ReminderUtilities.cancelFirebaseJobDispatcherForReminder(this);
         }
@@ -154,5 +179,11 @@ public class MainActivity extends AppCompatActivity {
     private void onNotificationCanceled() {
         DPGamePreferences.setNotificationIntervalTime(this, R.integer.pref_notification_interval_not_set);
         ReminderUtilities.cancelFirebaseJobDispatcherForReminder(MainActivity.this);
+    }
+
+    private void restartActivity() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }

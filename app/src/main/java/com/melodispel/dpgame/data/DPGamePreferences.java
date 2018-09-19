@@ -2,10 +2,15 @@ package com.melodispel.dpgame.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.melodispel.dpgame.R;
+
+import java.util.Locale;
 
 public class DPGamePreferences {
 
@@ -95,6 +100,39 @@ public class DPGamePreferences {
             return nbr;
         } catch (NumberFormatException ex) {
             return context.getResources().getInteger(R.integer.pref_default_nbr_of_responses_for_result_calculation);
+        }
+    }
+
+    public static String getCurrentAppLanguage(Context context) {
+        return  context.getResources().getConfiguration().locale.getLanguage();
+    }
+
+    public static void setPreferredLanguage(Context context, String lang) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(context.getResources().getString(R.string.pref_key_language), lang);
+        editor.apply();
+    }
+
+    public static String getPreferredLanguage(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(context.getResources().getString(R.string.pref_key_language),
+                context.getResources().getString(R.string.pref_default_language));
+    }
+
+    public static void applyPreferredAppLanguage(Context context) {
+        String lang = DPGamePreferences.getPreferredLanguage(context);
+        if (lang != null) {
+            if (!lang.equals(DPGamePreferences.getCurrentAppLanguage(context))) {
+
+                Locale locale = new Locale(lang);
+                Resources res = context.getResources();
+                DisplayMetrics dm = res.getDisplayMetrics();
+                Configuration conf = res.getConfiguration();
+                conf.locale = locale;
+                res.updateConfiguration(conf, dm);
+
+            }
         }
     }
 }

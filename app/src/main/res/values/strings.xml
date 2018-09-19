@@ -2,13 +2,17 @@
     <string name="app_name">DP Game</string>
     <string name="title_activity_level_list">Available levels</string>
 
+    <string name="title_settings">Settings</string>
+
     <string name="pref_key_number_of_responses_for_results" translatable="false">numberOfResponsesForResultCalculation</string>
     <string name="pref_label_number_of_responses">Response count for progression</string>
     <string name="pref_key_progression_limit" translatable="false">progressionLimit</string>
     <string name="pref_label_progression_limit">Progression limit (%)</string>
-    <string name="pref_key_notification_interval_unit">notificationIntervalUnit</string>
-    <string name="pref_default_notification_interval_unit">days</string>
-    <string name="pref_key_notification_interval">notificationInterval</string>
+    <string name="pref_key_notification_interval_unit" translatable="false">notificationIntervalUnit</string>
+    <string name="pref_default_notification_interval_unit" translatable="false">days</string>
+    <string name="pref_key_notification_interval" translatable="false">notificationInterval</string>
+    <string name="pref_key_language" translatable="false">languagePreference</string>
+    <string name="pref_default_language" translatable="false">en</string>
 
     <string name="notifications_instruction_for_new_notification">Notify me if I have not played for:</string>
     <string name="notifications_instruction_for_set_notification">I will be notified if I have not played for:</string>
@@ -50,5 +54,26 @@
     <string name="label_accumulated_results">Accumulated results</string>
     <string name="label_speed">Speed:</string>
     <string name="label_accuracy">Accuracy:</string>
+    <string name="label_main_play">Play</string>
+    <string name="label_main_test">Test</string>
+    <string name="label_main_results">Results</string>
+    <string name="label_test_info_id">Id</string>
+    <string name="instruction_play_target_area">Touch to start</string>
+    <string name="instruction_play_default"></string>
+    <string name="instruction_play_continue">[Tap to continue]</string>
+    <string name="message_play_level_progression">Progressed to level</string>
+    <string name="result_play_correct_response">correct</string>
+    <string name="result_play_incorrect_response">incorrect</string>
+    <string name="result_play_no_response">No response yet</string>
+    <string name="reminder_action_play">Play now</string>
+    <string name="reminder_action_cancel">Cancel reminders</string>
+
+
+
+    <string name="title_notifications">Notifications</string>
+    <string name="label_switch_language">Switch to</string>
+    <string name="language_english">English</string>
+    <string name="language_swedish">Swedish</string>
+
 
 </resources>

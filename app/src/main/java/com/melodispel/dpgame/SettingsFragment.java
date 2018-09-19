@@ -1,14 +1,21 @@
 package com.melodispel.dpgame;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.preference.CheckBoxPreference;
+import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final int PROGRESSION_LIMIT_MIN = 1;
+    private static final int PROGRESSION_LIMIT_MAX = 100000;
+    private static final int PROGRESSION_PERCENTAGE_MIN = 1;
+    private static final int PROGRESSION_PERCENTAGE_MAX = 100;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -27,6 +34,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 setPreferenceSummary(preference, value);
             }
         }
+
+        EditTextPreference nbrOfResponsesTextPref = (EditTextPreference) preferenceScreen.findPreference(getString(R.string.pref_key_number_of_responses_for_results));
+        EditTextPreference progressionLimitTextPref = (EditTextPreference) preferenceScreen.findPreference(getString(R.string.pref_key_progression_limit));
+
+
+        nbrOfResponsesTextPref.setOnPreferenceChangeListener(new NumberSettingChangeListener());
+        progressionLimitTextPref.setOnPreferenceChangeListener(new PercentSettingChangeListener());
     }
 
     @Override
@@ -59,5 +73,61 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         super.onStop();
 
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    private class NumberSettingChangeListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            Boolean validInput = true;
+            String message = "";
+            try {
+                int number = Integer.parseInt(newValue.toString());
+
+                if (number < PROGRESSION_LIMIT_MIN || number > PROGRESSION_LIMIT_MAX) {
+                    validInput = false;
+                    message = "Number is out of limits: " + PROGRESSION_LIMIT_MIN + " - " + PROGRESSION_LIMIT_MAX;
+                }
+            } catch (NumberFormatException ex) {
+                validInput = false;
+                message = "Please enter an integer number";
+            }
+            if (!validInput) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Invalid Input");
+                builder.setMessage(message);
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.show();
+                validInput = false;
+            }
+            return validInput;
+        }
+    }
+
+    private class PercentSettingChangeListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            Boolean validInput = true;
+            String message = "";
+            try {
+                int number = Integer.parseInt(newValue.toString());
+
+                if (number < PROGRESSION_PERCENTAGE_MIN || number > PROGRESSION_PERCENTAGE_MAX) {
+                    validInput = false;
+                    message = "Number is out of limits: " + PROGRESSION_PERCENTAGE_MIN + " - " + PROGRESSION_PERCENTAGE_MAX;
+                }
+            } catch (NumberFormatException ex) {
+                validInput = false;
+                message = "Please enter an integer number";
+            }
+            if (!validInput) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Invalid Input");
+                builder.setMessage(message);
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.show();
+                validInput = false;
+            }
+            return validInput;
+        }
     }
 }

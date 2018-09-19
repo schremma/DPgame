@@ -24,8 +24,14 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelAdapter
     }
 
     public void setData(Cursor newData) {
+        Cursor old = levelCursor;
+
         levelCursor = newData;
         notifyDataSetChanged();
+
+        if (old != null) {
+            old.close();
+        }
     }
 
     @Override

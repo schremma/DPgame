@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/settings_admin"
-        android:title="Settings"
+        android:title="@string/title_settings"
         android:orderInCategory="1"
         app:showAsAction="ifRoom"/>
 

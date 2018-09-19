@@ -21,7 +21,9 @@ public class PlayReminderIntentService extends IntentService {
             ReminderTasks.cancelPlayingReminder(this);
         } else if (action.equals(PLAY_NOW)) {
             ReminderTasks.cancelPlayNotification(this);
-            startActivity(new Intent(this, MainActivity.class));
+            Intent startActivityIntent = new Intent(this, MainActivity.class);
+            startActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startActivityIntent);
         }
     }
 }
