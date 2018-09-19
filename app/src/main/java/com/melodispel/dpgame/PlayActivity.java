@@ -19,6 +19,7 @@ import com.melodispel.dpgame.GameEnums.GameState;
 import com.melodispel.dpgame.GameEnums.ResponseAccuracy;
 import com.melodispel.dpgame.GameEnums.SessionState;
 import com.melodispel.dpgame.data.DBContract;
+import com.melodispel.dpgame.data.DPGamePreferences;
 import com.melodispel.dpgame.databinding.ActivityPlayBinding;
 import com.melodispel.dpgame.gameplay.GameManager;
 import com.melodispel.dpgame.gameplay.GamePlayDisplay;
@@ -59,6 +60,8 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DPGamePreferences.applyPreferredAppLanguage(this);
 
         Intent intent = getIntent();
 
@@ -277,12 +280,21 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     }
 
     public void setMaterial(Cursor materialsCursor) {
+
+        Cursor old = this.materialsCursor;
         this.materialsCursor = materialsCursor;
+        if (old !=null) {
+            old.close();
+        }
     }
 
     @Override
     public void progressToNextLevel(Cursor cursor, int level) {
+        Cursor old = this.materialsCursor;
         materialsCursor = cursor;
+        if (old !=null) {
+            old.close();
+        }
         gameState = GameState.PROGRESSED_LEVEL;
 
         Toast.makeText(getApplicationContext(), "Progressed to level "
@@ -457,6 +469,15 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         }
 
         outState.putParcelable(KEY_RESPONSE_TIMER, responseTimer);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (materialsCursor !=null) {
+            materialsCursor.close();
+        }
     }
 
 }
