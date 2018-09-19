@@ -139,6 +139,9 @@ public class TestActivity extends AppCompatActivity implements GamePlayDisplay {
         binding.sentenceDisplay.btnRight.setOnTouchListener(new TargetItemTouchListener());
         binding.sentenceDisplay.targetArea.setOnDragListener(new TargetAreaDragListener());
 
+        binding.sentenceDisplay.tvHint.setVisibility(View.INVISIBLE);
+        binding.sentenceDisplay.tvAnswerPrompt.setVisibility(View.INVISIBLE);
+
         toogleResponseControls(false);
     }
 

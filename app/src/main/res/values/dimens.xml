@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="play_sentence_text_size">24sp</dimen>
-    <dimen name="play_choice_text_size">18sp</dimen>
+    <dimen name="play_choice_text_size">36sp</dimen>
     <dimen name="play_choice_padding">20dp</dimen>
 
     <dimen name="play_land_choice_bottom_margin">48dp</dimen>

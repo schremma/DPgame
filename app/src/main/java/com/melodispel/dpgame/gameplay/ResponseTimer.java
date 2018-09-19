@@ -34,19 +34,20 @@ public class ResponseTimer implements Parcelable {
     public void stopResponseTimeMeasurement() {
 
         // RT should fit into an integer unless something went wrong
-        long elapsedTime = SystemClock.elapsedRealtime() - startTimeOfResponse;
+        long elapsedTime = getElapsedTIme();
         if (elapsedTime < Integer.MIN_VALUE || elapsedTime > Integer.MAX_VALUE) {
             responseTime = RESPONSE_TIME_DEFAULT;
         }
         else {
             responseTime = (int)elapsedTime;
         }
-
-        Log.i(this.getClass().getSimpleName(), "Timer stopped");
     }
 
     public long getStartTimeOfResponse() {
         return startTimeOfResponse;
+    }
+    public long getElapsedTIme() {
+       return SystemClock.elapsedRealtime() - startTimeOfResponse;
     }
 
     public int getResponseTime() {
@@ -72,7 +73,7 @@ public class ResponseTimer implements Parcelable {
     public String toString() {
         return("Response time: " +
         String.valueOf(responseTime)) + ", " +
-                "start time for resposne measurement: " +
+                "start time for response measurement: " +
                 String.valueOf(startTimeOfResponse);
     }
 }

@@ -5,5 +5,10 @@
     <color name="colorAccent">#FF4081</color>
     <color name="darkGrey">#122A34</color>
     <color name="lightGrey">#d1e0e0</color>
+    <color name="defaultChoiceBackground">#d1e0e0</color>
     <color name="colorTargetArea">#d1e0e0</color>
+    <color name="correctResponse">#47a075</color>
+    <color name="wrongResponse">#f06261</color>
+    <color name="wrongChoiceBackground">#3B494C</color>
+    <color name="correctChoiceBackground">#f9f9f6</color>
 </resources>

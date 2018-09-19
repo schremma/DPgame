@@ -24,6 +24,7 @@
         android:padding="@dimen/play_choice_padding"
         android:text=""
         android:textSize="@dimen/play_choice_text_size"
+        android:background="@color/defaultChoiceBackground"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintRight_toLeftOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,6 +39,7 @@
         android:layout_marginTop="8dp"
         android:padding="@dimen/play_choice_padding"
         android:text=""
+        android:background="@color/defaultChoiceBackground"
         android:textSize="@dimen/play_choice_text_size"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintLeft_toRightOf="@+id/btn_left"
@@ -80,7 +82,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="center"
-            android:background="@color/lightGrey" />
+            android:background="@color/colorTargetArea" />
 
         <TextView
             android:id="@+id/tv_itemEnd"
@@ -95,5 +97,36 @@
 
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/prompt_start_playing"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.19" />
+
+    <TextView
+        android:id="@+id/tv_answer_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/prompt_respond"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/btn_right" />
 </android.support.constraint.ConstraintLayout>
 </layout>

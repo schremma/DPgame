@@ -43,6 +43,9 @@
         <item quantity="other">%d weeks</item>
     </plurals>
 
+    <string name="prompt_start_playing">"Tap the target area above to get the next question"</string>
+    <string name="prompt_respond">"Drag the right completion to the target area"</string>
+
     <string name="label_play_last_response">Last response</string>
     <string name="label_accumulated_results">Accumulated results</string>
     <string name="label_speed">Speed:</string>

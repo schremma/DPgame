@@ -270,7 +270,6 @@ public class GameManager implements GamePlayManager {
                 cv.put(DBContract.SessionDataEntry.COLUMN_SESSION_START_TIME_STAMP, sessionData[i].getStartTimeStamp());
                 cv.put(DBContract.SessionDataEntry.COLUMN_SESSION_CUSTOMS, sessionData[i].getSessionCustoms());
 
-               // db.insert(DBContract.SessionDataEntry.TABLE_NAME, null, cv);
 
                 Uri responseUri = context.getContentResolver().insert(DBContract.SessionDataEntry.CONTENT_URI, cv);
 

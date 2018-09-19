@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.melodispel.dpgame.GameEnums.GameState;
@@ -39,15 +41,19 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
     private static final String KEY_RESPONSE_ACCURACY = "accuracyKey";
     private static final String KEY_MAINTAINED_RESULTS = "maintainedResultsKey";
     private static final String KEY_RESPONSE_TIMER = "responseTimer";
+    private static final String KEY_CORRECT_VIEW_ID = "correctViewId";
 
     private static final int LEVEL_DEFAULT = 1;
     private static final SessionState SESSION_STATE_DEFAULT = SessionState.NOT_STARTED_PLAYER;
+    private static final int ESPONSE_PROMPT_DELAY_MS = 5000;
+    private static final String TAG = "PlayActivity";
     
     private SessionState sessionState;
     private GameState gameState;
 
     private ResponseAccuracy responseAccuracy;
     private ResponseTimer responseTimer;
+    private Handler responsePromptHandler = new Handler();
 
 
     @Override
@@ -65,6 +71,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
             Log.i(getClass().getSimpleName(), "got level from intent");
         }
 
+
         if (savedInstanceState !=null) {
             responseTimer = (ResponseTimer) savedInstanceState.getParcelable(KEY_RESPONSE_TIMER);
             sessionState = savedInstanceState.containsKey(KEY_SESSION_STATE) ?
@@ -73,7 +80,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
                     (GameState) savedInstanceState.get(KEY_GAME_STATE) : GameState.NOT_STARTED;
             responseAccuracy = savedInstanceState.containsKey(KEY_RESPONSE_ACCURACY) ?
                     (ResponseAccuracy) savedInstanceState.get(KEY_RESPONSE_ACCURACY) : ResponseAccuracy.NO_RESPONSE;
-
+            correctTargetViewId = savedInstanceState.getInt(KEY_CORRECT_VIEW_ID, 0);
         }
         else {
             gameState = GameState.NOT_STARTED;
@@ -93,6 +100,10 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         }
         gamePlayManager = new GameManager(this, this, currentLevel, isPlayerSession);
 
+        if (sessionState.equals(SessionState.NOT_STARTED_PLAYER)) {
+            showHint(true);
+        }
+
         if (sessionState.equals(SessionState.NOT_STARTED_PLAYER) || sessionState.equals(SessionState.NOT_STARTED_TESTER)) {
 
             if (sessionState.equals(SessionState.NOT_STARTED_PLAYER)) {
@@ -104,13 +115,12 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
             }
         }
 
+
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_MAINTAINED_RESULTS)) {
             gamePlayManager.setAccumulatedResults(savedInstanceState.getStringArray(KEY_MAINTAINED_RESULTS));
         }
 
         if (gamePlayManager.onGameInitialized()) {
-            displayResults();
-
             if (!gameState.equals(GameState.NOT_STARTED)) {
 
                 if (gameState.equals(gameState.RESPONDED)) {
@@ -120,8 +130,8 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
                 }
                 showResultsOnTestPanel();
                 showCurrentSentence();
-
             }
+            displayResults();
         } else  {
             displayErrorMessage("Could not initialize game!");
         }
@@ -156,16 +166,28 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
 
         toogleResponseControls(false);
+        showHint(false);
+        binding.sentenceDisplay.tvAnswerPrompt.setVisibility(View.INVISIBLE);
 
     }
 
 
     private void startGame() {
         toogleResponseControls(true);
+        showHint(false);
         showCurrentSentence();
         responseTimer.startResponseTImeMeasurement();
         gameState = GameState.WAITING_RESPONSE;
+        responsePromptHandler.postDelayed(responsePromptChecker, ESPONSE_PROMPT_DELAY_MS);
     }
+
+    private Runnable responsePromptChecker = new Runnable() {
+        @Override
+        public void run() {
+           showResponsePrompt(true);
+        }
+    };
+
 
     private void continueWithNextItem() {
         moveToNextItem();
@@ -173,12 +195,14 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         showCurrentSentence();
         responseTimer.startResponseTImeMeasurement();
         gameState = GameState.WAITING_RESPONSE;
+        responsePromptHandler.postDelayed(responsePromptChecker, ESPONSE_PROMPT_DELAY_MS);
     }
 
     private void showCurrentSentence() {
 
 
         if (materialsCursor != null || materialsCursor.getPosition() >= 0) {
+            resetAccuracyFeedback();
             binding.sentenceDisplay.tvItemStart.setText(materialsCursor.getString(materialsCursor.
                     getColumnIndex(DBContract.MaterialsEntry.COLUMN_ITEM_START)));
             binding.sentenceDisplay.tvItemEnd.setText(materialsCursor.getString(materialsCursor.
@@ -270,6 +294,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         binding.sentenceDisplay.btnRight.setText("");
         binding.sentenceDisplay.tvItemStart.setText("");
         binding.sentenceDisplay.tvItemEnd.setText("");
+        resetAccuracyFeedback();
     }
 
 
@@ -343,6 +368,8 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
             accuracy = true;
         gamePlayManager.onNewPlayerResponse(sentenceID, responseTimer.getResponseTime(), accuracy);
 
+        responsePromptHandler.removeCallbacks(responsePromptChecker);
+        showResponsePrompt(false);
         displayResults();
         showResultsOnTestPanel();
     }
@@ -354,6 +381,21 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         binding.sentenceDisplay.btnRight.setEnabled(enabled);
     }
 
+    private void showHint(boolean show) {
+        if (show) {
+            binding.sentenceDisplay.tvHint.setVisibility(View.VISIBLE);
+        } else {
+            binding.sentenceDisplay.tvHint.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void showResponsePrompt(boolean show)  {
+        if (show)
+            binding.sentenceDisplay.tvAnswerPrompt.setVisibility(View.VISIBLE);
+        else
+            binding.sentenceDisplay.tvAnswerPrompt.setVisibility(View.INVISIBLE);
+    }
+
     private void displayResults() {
         ResultSummary resultSummary = gamePlayManager.getResultSummary();
         double accuracyPercent =  Math.round(resultSummary.getAccuracyPercent());
@@ -361,6 +403,38 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
 
         binding.testerPanel.tvAccuracy.setText(String.valueOf(accuracyPercent) + getString(R.string.accuracy_unit));
         binding.testerPanel.tvRt.setText(String.valueOf(rt) + " "  + getString(R.string.response_time_unit));
+
+        if (gameState.equals(GameState.RESPONDED)) {
+            displayAccuracyFeedback();
+        }
+    }
+
+    private void displayAccuracyFeedback() {
+
+        if (responseAccuracy.equals(ResponseAccuracy.CORRECT)) {
+            binding.sentenceDisplay.targetArea.setBackgroundColor(getResources().getColor(R.color.correctResponse));
+        } else if (responseAccuracy.equals(ResponseAccuracy.WRONG)) {
+            binding.sentenceDisplay.targetArea.setBackgroundColor(getResources().getColor(R.color.wrongResponse));
+        }
+
+        Button incorrectOption = binding.sentenceDisplay.btnLeft;
+        if (incorrectOption.getId() == correctTargetViewId)
+            incorrectOption = binding.sentenceDisplay.btnRight;
+        incorrectOption.setBackgroundColor(getResources().getColor(R.color.wrongChoiceBackground));
+
+        if (binding.sentenceDisplay.btnRight.getId() == correctTargetViewId) {
+            binding.sentenceDisplay.btnRight.setBackgroundColor(getResources().getColor(R.color.correctChoiceBackground));
+            binding.sentenceDisplay.btnLeft.setBackgroundColor(getResources().getColor(R.color.wrongChoiceBackground));
+        } else {
+            binding.sentenceDisplay.btnLeft.setBackgroundColor(getResources().getColor(R.color.correctChoiceBackground));
+            binding.sentenceDisplay.btnRight.setBackgroundColor(getResources().getColor(R.color.wrongChoiceBackground));
+        }
+    }
+
+    private void resetAccuracyFeedback() {
+        binding.sentenceDisplay.btnRight.setBackgroundColor(getResources().getColor(R.color.defaultChoiceBackground));
+        binding.sentenceDisplay.btnLeft.setBackgroundColor(getResources().getColor(R.color.defaultChoiceBackground));
+        binding.sentenceDisplay.targetArea.setBackgroundColor(getResources().getColor(R.color.colorTargetArea));
     }
 
     private void displayErrorMessage(String message) {
@@ -373,6 +447,7 @@ public class PlayActivity extends AppCompatActivity implements GamePlayDisplay {
         super.onSaveInstanceState(outState);
 
         outState.putInt(KEY_LEVEL, gamePlayManager.getCurrentLevel());
+        outState.putInt(KEY_CORRECT_VIEW_ID, correctTargetViewId);
         outState.putSerializable(KEY_SESSION_STATE, sessionState);
         outState.putSerializable(KEY_GAME_STATE, gameState);
 
