@@ -67,7 +67,7 @@
     <string name="result_play_no_response">No response yet</string>
     <string name="reminder_action_play">Play now</string>
     <string name="reminder_action_cancel">Cancel reminders</string>
-
+    <string name="message_no_results_to_display">You have no results yet to show</string>
 
 
     <string name="title_notifications">Notifications</string>

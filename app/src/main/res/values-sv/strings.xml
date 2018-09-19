@@ -53,6 +53,7 @@
     <string name="reminder_action_play">Spela!</string>
     <string name="reminder_action_cancel">Inga påminnelser</string>
     <string name="message_play_level_progression">Ny nivå</string>
+    <string name="message_no_results_to_display">Du har inga resultat att visa</string>
 
     <string name="title_notifications">Påminnelser</string>
     <string name="label_switch_language">Ändra till</string>
