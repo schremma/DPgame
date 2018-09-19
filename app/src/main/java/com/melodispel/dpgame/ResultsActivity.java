@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.melodispel.dpgame.data.DBContract;
+import com.melodispel.dpgame.data.DPGamePreferences;
 
 public class ResultsActivity extends AppCompatActivity {
 
@@ -22,6 +23,7 @@ public class ResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+        DPGamePreferences.applyPreferredAppLanguage(this);
 
         WebView webView = findViewById(R.id.webViewResultsGRaph);
         WebSettings webSettings = webView.getSettings();
@@ -34,7 +36,6 @@ public class ResultsActivity extends AppCompatActivity {
             TextView textView = findViewById(R.id.tv_default_message);
             textView.setText(getString(R.string.message_no_results_to_display));
             textView.setVisibility(View.VISIBLE);
-            //webView.loadData(getDefaultContent(), "text/html", "utf-8");
         }
     }
 
@@ -136,20 +137,6 @@ public class ResultsActivity extends AppCompatActivity {
             return content;
         }
         return null;
-    }
-
-    private String getDefaultContent() {
-        String content = "<html>"
-                + "  <head>"
-                + "  </head>"
-                + "  <body>"
-                + "     <div>"
-                + "         <p>" + R.string.message_no_results_to_display + "<p>"
-                + "     </div>"
-                + "  </body>" + "</html>";
-
-
-        return content;
     }
 
 }
