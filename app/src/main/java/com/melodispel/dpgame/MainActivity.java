@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onNotificationCanceled() {
-        DPGamePreferences.setNotificationIntervalTime(this, R.integer.pref_notification_interval_not_set);
+        DPGamePreferences.setNotificationIntervalTime(this, getResources().getInteger(R.integer.pref_notification_interval_not_set));
         ReminderUtilities.cancelFirebaseJobDispatcherForReminder(MainActivity.this);
     }
 

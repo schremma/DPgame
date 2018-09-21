@@ -14,6 +14,8 @@ import java.util.Locale;
 
 public class DPGamePreferences {
 
+    private static final String TAG = "DPGamePreferences";
+
 
     public static void setNotificationIntervalUnit(Context context, String intervalUnit) {
 
@@ -28,7 +30,9 @@ public class DPGamePreferences {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
-        
+
+        Log.i(TAG, "notification interval: " + intervalTime);
+
         editor.putInt(context.getResources().getString(R.string.pref_key_notification_interval), intervalTime);
         editor.apply();
 
@@ -38,8 +42,7 @@ public class DPGamePreferences {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
         int interval = sp.getInt(context.getResources().getString(R.string.pref_key_notification_interval),context.getResources().getInteger(R.integer.pref_default_notification_interval));
-
-        Log.i("DPGamePreferences", "interval: " + interval);
+        Log.i(TAG, "notification interval: " + interval);
 
         return interval;
 

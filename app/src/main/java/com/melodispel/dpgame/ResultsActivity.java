@@ -53,7 +53,7 @@ public class ResultsActivity extends AppCompatActivity {
                 null,
                 null);
 
-        if (cursorResponses.getCount() > 1) {
+        if (cursorResponses.getCount() > 0) {
 
             StringBuilder stringRT = new StringBuilder();
             stringRT.append("[");
